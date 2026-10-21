@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solidarité Éducative Comores — Maintenance en cours</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      background-color: #fef3c7;
+      color: #92400e;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid #fde68a;
+      margin-bottom: 1.5rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #d97706;
+      display: inline-block;
+    }
+    .icon-container {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1.5rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, #092c4c, #0e7490);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 15px -3px rgba(14, 116, 144, 0.2);
+    }
+    .icon-container svg {
+      width: 36px;
+      height: 36px;
+      stroke: #5eead4;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    h1 {
+      font-size: 1.75rem;
+      color: #092c4c;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+    p {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    .info-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+    }
+    .info-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+    .info-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      background-color: #092c4c;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+    .btn:hover {
+      background-color: #1e293b;
+    }
+    .footer-note {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f1f5f9;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .footer-note a {
+      color: #e11d48;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">
+      <span class="dot"></span>
+      Maintenance programmée • Code 503
+    </div>
+
+    <div class="icon-container">
+      <svg viewBox="0 0 24 24">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+      </svg>
+    </div>
+
+    <h1>Plateforme en maintenance</h1>
+    <p>
+      Solidarité Éducative Comores effectue actuellement une mise à niveau technique de ses serveurs. Nous serons de retour dans quelques instants.
+    </p>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-title">🔒 Données sécurisées</div>
+        <div class="info-desc">Tous les dossiers, notes et livrets sont intacts.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-title">⏱️ Durée estimée</div>
+        <div class="info-desc">Moins de 30 minutes d'interruption.</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="window.location.reload()">
+      Rafraîchir la page
+    </button>
+
+    <div class="footer-note">
+      Besoin d'aide urgente ? Écrivez à <a href="mailto:protection@benevolat.km">protection@benevolat.km</a>.
+    </div>
+  </div>
+</body>
+</html>
