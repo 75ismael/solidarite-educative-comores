@@ -246,17 +246,39 @@ class Command(BaseCommand):
         )
         req2.subjects.set([subject_objs['Français']])
 
-        # 6. Missions publiques (F04 anonymisées)
+        # 6. Missions publiques (F04 anonymisées style JeVeuxAider)
         mission1, _ = PublicMission.objects.get_or_create(
-            title="Soutien en Français & Écriture - Niveau Primaire (CM2)",
+            title="Je suis étudiant et je réalise du tutorat en collège 2h/semaine",
             defaults={
+                'published_by': "Ebru B., Ayoub B.",
+                'organization_name': "Solidarité Éducative Comores",
+                'organization_description': "Créée pour lutter contre les fractures scolaires, Solidarité Éducative agit à travers des programmes d'accompagnement bénévole en ligne et en présentiel dans les établissements partenaires aux Comores. Notre méthode simple et éprouvée : un bénévole accompagne 1h30 à 2h par semaine un élève pour consolider ses bases, développer sa méthode et lui redonner confiance.",
+                'activity_type': "Soutien scolaire & Tutorat",
+                'target_public': "Collégiens (6e à 3e - Préparation Brevet)",
                 'subject': subject_objs['Français'],
-                'school_level': 'Primaire (CM2)',
+                'school_level': 'Collège (3ème)',
                 'island': 'Grande Comore (Ngazidja)',
-                'city': 'Moroni',
-                'format': PublicMission.Format.REMOTE,
-                'description': 'Mission anonymisée : Accompagnement d\'un élève préparant son entrée au collège. Travail de fluidité de lecture, vocabulaire et grammaire.',
-                'expected_commitment': '1h30 par semaine',
+                'city': 'Moroni, Iconi, Mitsamiouli',
+                'intervention_zone_details': "Moroni : Collège de Moroni Sud • Iconi : Collège Communal • Mitsamiouli : Collège Rural • Antenne en ligne",
+                'format': PublicMission.Format.EITHER,
+                'prerequisites': "Mission ouverte aux étudiants, enseignants et professionnels bienveillants. Maîtrise des fondamentaux du français et pédagogie patiente.",
+                'description': "Accompagnement méthodique d'un petit groupe d'élèves de collège pour préparer leur brevet et surmonter leurs difficultés en lecture et expression écrite.",
+                'presentation_full': """Bonjour,
+Tout d'abord nous vous remercions de prendre ce temps pour nous lire :)
+
+L'association recherche des bénévoles engagés pour intégrer notre programme de tutorat dans les collèges partenaires. Nous proposons d'intervenir, selon vos disponibilités, à travers un rendez-vous hebdomadaire de 1h30 à 2h pour accompagner un élève ou un petit groupe de la 6e à la 3e dans leur réussite scolaire.
+
+Qu'est-ce que cette réussite ?
+Pour notre équipe, c'est réduire les inégalités scolaires en agissant sur la motivation, la méthode de travail développée par vos élèves et la régularité de vos rendez-vous ! Les bénéfices sont multiples : des progrès académiques concrets, un éveil culturel et un repère bienveillant.
+
+Pour nos bénévoles, les compétences développées sont valorisables dans le monde professionnel et l'expérience humaine restera gravée comme un formidable marqueur d'impact social.""",
+                'steps_to_join': """Rassurez-vous, notre équipe locale organise une réunion d'information préalable pour répondre à toutes vos questions avant tout engagement.
+Une rapide formation aux outils méthodologiques et à la charte éthique sera dispensée.
+Enfin, notre coordinateur vous accompagne tout au long de l'année scolaire.""",
+                'practical_details': """Vous n'êtes pas seuls ! Notre équipe vous accueille dans l'établissement ou vous guide pour les séances en visiophonie/téléphone. Nous partageons des ressources adaptées et assurons des points d'étape réguliers.
+Il n'y a pas d'accompagnement les dimanches et jours fériés.""",
+                'benefits': "Attestation officielle d'engagement bénévole et de compétences transversales développées délivrée en fin d'année.",
+                'expected_commitment': '2h par semaine',
                 'status': PublicMission.Status.OPEN,
                 'related_request': req2,
                 'deadline': date.today() + timedelta(days=21)
@@ -264,14 +286,25 @@ class Command(BaseCommand):
         )
 
         mission2, _ = PublicMission.objects.get_or_create(
-            title="Accompagnement en Sciences Physiques - Lycée (Terminale)",
+            title="Accompagnement en Sciences Physiques - Lycée (Terminale C/D)",
             defaults={
+                'published_by': "Dr. Nassim M., Coordination Bac",
+                'organization_name': "Lycée Saïd Mohamed Cheikh",
+                'organization_description': "Établissement d'enseignement secondaire de référence aux Comores, partenaire du réseau Solidarité Éducative pour le mentorat des séries scientifiques.",
+                'activity_type': "Mentorat scientifique intensif",
+                'target_public': "Lycéens en Terminale Scientifique (C & D)",
                 'subject': subject_objs['Physique-Chimie'],
                 'school_level': 'Lycée (Terminale)',
                 'island': 'Anjouan (Ndzuwani)',
                 'city': 'Mutsamudu',
+                'intervention_zone_details': "Mutsamudu : Lycée Technique et Général • Domoni : Salle d'étude communale • Formule distancielle pour la diaspora",
                 'format': PublicMission.Format.EITHER,
-                'description': 'Mission anonymisée : Préparation au Baccalauréat scientifique. Révision des notions d\'optique, mécanique et cinétique chimique.',
+                'prerequisites': "Étudiants en sciences, élèves-ingénieurs ou professeurs de physique-chimie. Rigueur scientifique et capacité de vulgarisation.",
+                'description': "Préparation intensive au Baccalauréat comorien : révision des notions d'optique, de mécanique newtonienne, d'électricité et cinétique chimique.",
+                'presentation_full': "Offrez à un futur bachelier l'accompagnement nécessaire pour décrocher sa mention au Bac et réussir son orientation vers l'enseignement supérieur.",
+                'steps_to_join': "Entretien pédagogique préalable avec le coordinateur scientifique et transmission des sujets d'annales corrigés.",
+                'practical_details': "Séances de 2h le samedi matin ou créneaux flexibles en semaine en distanciel.",
+                'benefits': "Reconnaissance académique et mise en réseau avec les équipes éducatives comoriennes.",
                 'expected_commitment': '2h par semaine',
                 'status': PublicMission.Status.OPEN,
                 'deadline': date.today() + timedelta(days=14)

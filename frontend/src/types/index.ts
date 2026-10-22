@@ -98,14 +98,25 @@ export interface VolunteerProfile {
 export interface PublicMission {
   id: number;
   title: string;
+  published_by?: string;
+  organization_name?: string;
+  organization_description?: string;
+  activity_type?: string;
+  target_public?: string;
   subject: number;
   subject_name: string;
   school_level: string;
   island: string;
   city: string;
+  intervention_zone_details?: string;
   format: 'REMOTE' | 'IN_PERSON' | 'EITHER';
   format_display: string;
+  prerequisites?: string;
   description: string;
+  presentation_full?: string;
+  steps_to_join?: string;
+  practical_details?: string;
+  benefits?: string;
   expected_commitment: string;
   status: 'OPEN' | 'FILLED' | 'CLOSED';
   status_display: string;

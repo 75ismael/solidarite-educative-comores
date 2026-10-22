@@ -33,10 +33,12 @@ class PublicMissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PublicMission
         fields = [
-            'id', 'title', 'subject', 'subject_name', 'school_level',
-            'island', 'city', 'format', 'format_display', 'description',
-            'expected_commitment', 'status', 'status_display', 'deadline',
-            'created_at', 'applications_count'
+            'id', 'title', 'published_by', 'organization_name', 'organization_description',
+            'activity_type', 'target_public', 'subject', 'subject_name', 'school_level',
+            'island', 'city', 'intervention_zone_details', 'format', 'format_display',
+            'prerequisites', 'description', 'presentation_full', 'steps_to_join',
+            'practical_details', 'benefits', 'expected_commitment', 'status', 'status_display',
+            'deadline', 'created_at', 'applications_count'
         ]
 
 class MissionApplicationSerializer(serializers.ModelSerializer):
