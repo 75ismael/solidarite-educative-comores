@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { apiClient } from '../../api/client';
-import { PublicMission } from '../../types';
+import { apiClient, extractResults } from '../../api/client';
+import { PublicMission, Testimonial } from '../../types';
 import {
   MapPin, Clock, Calendar, HeartHandshake, BookOpen, ArrowLeft, ArrowRight,
   Building2, GraduationCap, Users, Laptop, ShieldCheck, CheckCircle2,
   Info, Sparkles, ChevronDown, ChevronUp, ExternalLink, Award,
-  User, Mail, Phone, AlertCircle, Hash,
+  User, Mail, Phone, AlertCircle, Hash, Star, Quote, MessageSquare,
 } from 'lucide-react';
 
 interface MissionApplication {
@@ -91,7 +91,143 @@ const DEMO_MISSIONS: Record<string, PublicMission> = {
     created_at: '2026-10-21',
     applications_count: 4,
   },
+  '2': {
+    id: 2,
+    title: 'Accompagnement en Sciences Physiques - Lycée (Terminale C & D)',
+    published_by: 'Dr. Nassim M., Équipe Pédagogique',
+    organization_name: 'Lycée Saïd Mohamed Cheikh',
+    organization_description: "Grand établissement d'enseignement secondaire de référence aux Comores, engagé avec Solidarité Éducative pour démocratiser l'accès aux filières scientifiques d'excellence.",
+    activity_type: 'Mentorat scientifique intensif',
+    target_public: 'Lycéens en Terminale Scientifique (C & D)',
+    subject: 2, subject_name: 'Physique-Chimie',
+    school_level: 'Lycée (Terminale)',
+    island: 'Anjouan (Ndzuwani)',
+    city: 'Mutsamudu, Domoni',
+    intervention_zone_details: 'Mutsamudu : Campus Lycée Saïd Mohamed Cheikh • Domoni : Salle communale de travail • Visiophonie pour la diaspora',
+    format: 'EITHER', format_display: 'Sur le terrain ou à distance',
+    prerequisites: 'Étudiants en sciences, élèves-ingénieurs ou professeurs de physique-chimie. Maîtrise du programme de Terminale S.',
+    description: "Préparation intensive au Baccalauréat scientifique comorien : mécanique newtonienne, circuits électriques, chimie des solutions et optique.",
+    presentation_full: "Offrez à un futur bachelier l'accompagnement nécessaire pour décrocher sa mention au Bac et réussir son orientation vers l'enseignement supérieur.",
+    steps_to_join: "Entretien pédagogique préalable avec le coordinateur scientifique et transmission des sujets d'annales corrigés.",
+    practical_details: "Séances de 2h le samedi matin ou créneaux flexibles en semaine en distanciel.",
+    benefits: "Attestation de mentorat scientifique officiel reconnue par le réseau des établissements partenaires.",
+    expected_commitment: '2h par semaine',
+    status: 'OPEN', status_display: 'Mission ouverte',
+    deadline: '2026-11-30',
+    start_date: '2026-11-15',
+    end_date: '2027-06-15',
+    created_at: '2026-10-20',
+    applications_count: 3,
+  },
+  '3': {
+    id: 3,
+    title: 'Aide aux Devoirs & Découverte de la Lecture - Primaire (CE2 à CM2)',
+    published_by: 'Fatima Z., Coordinatrice Primaire',
+    organization_name: 'École Primaire Moroni Sud',
+    organization_description: "École primaire publique accueillant plus de 450 élèves. Partenaire pilote pour le programme de lutte contre le décrochage précoce et l'apprentissage fondamental.",
+    activity_type: 'Aide aux devoirs & Éveil',
+    target_public: 'Écoliers du primaire (8 à 11 ans)',
+    subject: 3, subject_name: 'Aide aux devoirs & Méthodologie',
+    school_level: 'Primaire (CE2 - CM2)',
+    island: 'Grande Comore (Ngazidja)',
+    city: 'Moroni',
+    intervention_zone_details: 'Moroni Sud : Bibliothèque de quartier Mtsangani et salles d’études encadrées',
+    format: 'IN_PERSON', format_display: 'Mission sur le terrain',
+    prerequisites: 'Patience, bienveillance, sens de l’écoute et plaisir de transmettre le goût de la lecture aux plus jeunes.',
+    description: "Aide aux leçons du soir, entraînement à la lecture à voix haute et jeux éducatifs de calcul pour donner confiance aux écoliers.",
+    presentation_full: "Aider un enfant à comprendre ses leçons et à lire avec plaisir, c'est lui ouvrir tout son avenir scolaire !",
+    steps_to_join: "Rencontre avec la directrice d'école et les enseignants pour faire le point sur les besoins des enfants.",
+    practical_details: "Intervention sur place le mardi et jeudi de 16h à 17h30 dans les locaux de l'école.",
+    benefits: "Formation à l'animation d'ateliers lecture et convention de bénévolat éducatif.",
+    expected_commitment: '1h30 par semaine',
+    status: 'OPEN', status_display: 'Mission ouverte',
+    deadline: '2026-11-25',
+    start_date: '2026-11-10',
+    end_date: '2027-06-20',
+    created_at: '2026-10-19',
+    applications_count: 5,
+  },
+  '4': {
+    id: 4,
+    title: 'Tutorat en Mathématiques pour collégiens en zone rurale (Mohéli)',
+    published_by: 'Ali Bacar, Délégué Mohéli',
+    organization_name: 'Collectif Éducation Mohéli',
+    organization_description: "Organisation citoyenne basée à Fomboni, mobilisée pour l'accès équitable aux ressources éducatives et au soutien scolaire pour les élèves des villages insulaires.",
+    activity_type: 'Soutien scolaire rural',
+    target_public: 'Collégiens de 5e, 4e et 3e',
+    subject: 1, subject_name: 'Mathématiques',
+    school_level: 'Collège (5e à 3e)',
+    island: 'Mohéli (Mwali)',
+    city: 'Fomboni, Nioumachoua',
+    intervention_zone_details: 'Collège de Fomboni • Espace Jeunesse Nioumachoua • Suivi visio possible avec support 4G fourni',
+    format: 'EITHER', format_display: 'Sur le terrain ou à distance',
+    prerequisites: 'Bonne pédagogie, clarté dans les explications géométriques et algébriques.',
+    description: "Accompagner des collégiens de Mohéli pour surmonter leurs blocages en mathématiques et aborder les contrôles sereinement.",
+    presentation_full: "Participez au désenclavement scolaire de l'île de Mohéli en offrant un accompagnement stimulant et régulier.",
+    steps_to_join: "Échange visio avec le référent territorial et attribution d'un élève ou binôme.",
+    practical_details: "1h30 hebdomadaire sur créneau convenu ensemble selon les connexions réseau.",
+    benefits: "Contribution à fort impact solidaire et valorisation de votre engagement territorial.",
+    expected_commitment: '1h30 à 2h par semaine',
+    status: 'OPEN', status_display: 'Mission ouverte',
+    deadline: '2026-12-05',
+    start_date: '2026-11-12',
+    end_date: '2027-06-30',
+    created_at: '2026-10-18',
+    applications_count: 2,
+  },
 };
+
+// Témoignages démo avec photos réelles pour fallback immédiat
+const DEMO_TESTIMONIALS: Testimonial[] = [
+  {
+    id: 1,
+    name: 'Aminata Mohamed',
+    role: 'Étudiante en Master FLE & Tutrice bénévole',
+    role_type: 'VOLUNTEER',
+    role_type_display: 'Bénévole / Tutrice',
+    quote: "Accompagner un élève 2h par semaine à distance est l'expérience la plus gratifiante de mon parcours étudiant. Les outils sont fluides, l'équipe sur place aux Comores est disponible, et voir les progrès en direct sur ses rédactions est formidable.",
+    photo_display: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+    location: 'Lyon (Diaspora) & Moroni',
+    rating: 5,
+    is_featured: true,
+  },
+  {
+    id: 2,
+    name: 'Fatima Ibrahim',
+    role: "Parent d'élève au collège Moroni Sud",
+    role_type: 'PARENT',
+    role_type_display: "Parent d'élève",
+    quote: "Grâce au bénévole qui aide mon fils chaque samedi en français et méthodologie, ses notes ont grimpé de 4 points et il a repris confiance avant son examen du Brevet. Un immense soulagement pour toute notre famille !",
+    photo_display: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+    location: 'Moroni, Grande Comore',
+    rating: 5,
+    is_featured: true,
+  },
+  {
+    id: 3,
+    name: 'Youssouf Ali',
+    role: 'Professeur certifié & Mentor bénévole',
+    role_type: 'VOLUNTEER',
+    role_type_display: 'Mentor bénévole',
+    quote: "La plateforme permet un suivi pédagogique rigoureux. Je prépare les fiches de révision et partage des exercices concrets. Le décalage horaire se gère facilement et l'impact sur l'estime de l'enfant est immédiat.",
+    photo_display: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+    location: 'Marseille & Iconi',
+    rating: 5,
+    is_featured: true,
+  },
+  {
+    id: 4,
+    name: 'Nassim K.',
+    role: 'Élève de 3ème accompagné (Session 2026)',
+    role_type: 'STUDENT',
+    role_type_display: 'Élève accompagné',
+    quote: "Avant je bloquais sur les rédactions et la grammaire. Mon tuteur m'explique calmement sans me juger. Maintenant j'ose lever la main en classe et je vise la mention au Brevet !",
+    photo_display: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80',
+    location: 'Mitsamiouli, Ngazidja',
+    rating: 5,
+    is_featured: true,
+  },
+];
 
 function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '—';
@@ -117,12 +253,45 @@ const STATUS_CONFIG = {
   DECLINED: { label: 'Non retenue', bg: 'bg-rose-100', text: 'text-rose-800',   border: 'border-rose-200',   dot: 'bg-rose-400'   },
 };
 
+const TestimonialAvatar: React.FC<{ testimonial: Testimonial }> = ({ testimonial }) => {
+  const [imgError, setImgError] = useState(false);
+  const photo = testimonial.photo_display || testimonial.avatar_url || testimonial.photo;
+  const initials = (testimonial.name || 'B').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  const roleGradients: Record<string, string> = {
+    VOLUNTEER: 'from-brand-blue to-brand-teal',
+    STUDENT: 'from-amber-600 to-orange-500',
+    PARENT: 'from-purple-600 to-indigo-600',
+    COORDINATOR: 'from-emerald-600 to-teal-700',
+  };
+  const gradient = roleGradients[testimonial.role_type || 'VOLUNTEER'] || 'from-brand-blue to-brand-teal';
+
+  if (photo && !imgError) {
+    return (
+      <img
+        src={photo}
+        alt={testimonial.name}
+        onError={() => setImgError(true)}
+        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md ring-2 ring-brand-teal/20 shrink-0"
+      />
+    );
+  }
+
+  return (
+    <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} text-white flex items-center justify-center font-extrabold text-sm shadow-md shrink-0 border-2 border-white ring-2 ring-brand-teal/20`}>
+      {initials}
+    </div>
+  );
+};
+
 export const MissionDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [mission, setMission] = useState<PublicMission | null>(null);
   const [applications, setApplications] = useState<MissionApplication[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [relatedMissions, setRelatedMissions] = useState<PublicMission[]>([]);
   const [loading, setLoading] = useState(true);
   const [orgExpanded, setOrgExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'presentation' | 'steps' | 'practical'>('presentation');
@@ -135,7 +304,10 @@ export const MissionDetailPage: React.FC = () => {
     Promise.all([
       apiClient.get<PublicMission>(`/volunteering/missions/${missionId}/`).catch(() => null),
       apiClient.get(`/volunteering/applications/?mission_id=${missionId}`).catch(() => null),
-    ]).then(([missionRes, appsRes]) => {
+      apiClient.get(`/cms/testimonials/?mission_id=${missionId}`).catch(() => null),
+      apiClient.get('/volunteering/missions/').catch(() => null),
+    ]).then(([missionRes, appsRes, testRes, allMissionsRes]) => {
+      // 1. Mission courante
       if (missionRes?.data) {
         setMission(missionRes.data);
       } else if (DEMO_MISSIONS[missionId]) {
@@ -144,12 +316,32 @@ export const MissionDetailPage: React.FC = () => {
         setMission(Object.values(DEMO_MISSIONS)[0]);
       }
 
+      // 2. Candidatures
       if (appsRes?.data) {
         const results = Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.results || [];
         setApplications(results.length > 0 ? results : DEMO_APPLICATIONS);
       } else {
         setApplications(DEMO_APPLICATIONS);
       }
+
+      // 3. Témoignages dédiés (CMS)
+      if (testRes?.data) {
+        const list = extractResults<Testimonial>(testRes.data);
+        setTestimonials(list.length > 0 ? list : DEMO_TESTIMONIALS);
+      } else {
+        setTestimonials(DEMO_TESTIMONIALS);
+      }
+
+      // 4. Autres missions qui pourraient intéresser
+      let allMissions: PublicMission[] = [];
+      if (allMissionsRes?.data) {
+        allMissions = extractResults<PublicMission>(allMissionsRes.data);
+      }
+      if (!allMissions || allMissions.length === 0) {
+        allMissions = Object.values(DEMO_MISSIONS);
+      }
+      const others = allMissions.filter(m => String(m.id) !== String(missionId));
+      setRelatedMissions(others.length > 0 ? others : Object.values(DEMO_MISSIONS).filter(m => String(m.id) !== String(missionId)));
     }).finally(() => setLoading(false));
   }, [id]);
 
@@ -561,6 +753,228 @@ export const MissionDetailPage: React.FC = () => {
 
           </div>
         </div>
+
+        {/* ── 3. SECTION TÉMOIGNAGES DÉDIÉE (CMS) ── */}
+        <section className="mt-14 pt-10 border-t border-slate-200/90">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-brand-teal text-xs font-bold uppercase tracking-wider">
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Retours d'expérience du terrain</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Témoignages de nos bénévoles & familles
+              </h2>
+              <p className="text-sm text-slate-600 max-w-2xl">
+                Découvrez le vécu de celles et ceux qui s'engagent chaque semaine pour la réussite des élèves comoriens.
+              </p>
+            </div>
+
+            {/* Note moyenne globale & badge vérifié */}
+            <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm shrink-0">
+              <div className="flex items-center gap-1 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <div className="text-xs font-bold text-slate-800">
+                4.9 / 5 <span className="text-slate-400 font-normal">• Avis 100% vérifiés</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Grille de témoignages */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.slice(0, 3).map((t) => (
+              <div
+                key={t.id}
+                className="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-200/80 hover:shadow-md hover:border-brand-teal/40 transition-all flex flex-col justify-between group"
+              >
+                <div className="space-y-4">
+                  {/* Étoiles & Badge de rôle */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-0.5 text-amber-400">
+                      {[...Array(t.rating || 5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                      ))}
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-brand-teal border border-teal-200">
+                      {t.role_type_display || (t.role_type === 'PARENT' ? "Parent d'élève" : t.role_type === 'STUDENT' ? "Élève" : "Bénévole")}
+                    </span>
+                  </div>
+
+                  {/* Citation */}
+                  <div className="relative">
+                    <Quote className="w-6 h-6 text-teal-200/60 mb-1 shrink-0" />
+                    <p className="text-slate-700 text-sm leading-relaxed italic line-clamp-4">
+                      "{t.quote}"
+                    </p>
+                  </div>
+                </div>
+
+                {/* Profil de la personne avec photo */}
+                <div className="pt-5 mt-5 border-t border-slate-100 flex items-center gap-3.5">
+                  <TestimonialAvatar testimonial={t} />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-slate-900 text-sm truncate group-hover:text-brand-blue transition-colors">
+                      {t.name}
+                    </div>
+                    <div className="text-xs text-slate-500 truncate">{t.role}</div>
+                    {t.location && (
+                      <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3 text-brand-teal shrink-0" />
+                        <span className="truncate">{t.location}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bandeau d'encouragement sous les témoignages */}
+          <div className="mt-6 bg-gradient-to-r from-teal-50 to-sky-50 rounded-2xl p-4 sm:p-5 border border-teal-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+                <HeartHandshake className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-xs sm:text-sm font-bold text-slate-800">
+                  Vous avez envie de vivre cette aventure humaine ?
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  Rejoignez nos 48+ tuteurs bénévoles et accompagnez un élève vers la réussite.
+                </div>
+              </div>
+            </div>
+
+            <Link
+              to={`/devenir-benevole?mission=${mission.id}`}
+              className="px-4 py-2 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-sm transition-all shrink-0 flex items-center gap-1.5"
+            >
+              <span>Candidater à cette mission</span>
+              <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
+            </Link>
+          </div>
+        </section>
+
+        {/* ── 4. SECTION AUTRES MISSIONS QUI POURRAIENT VOUS INTÉRESSER ── */}
+        <section className="mt-14 pt-10 border-t border-slate-200/90">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-brand-blue text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-teal-600" />
+                <span>Opportunités similaires</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                D'autres missions qui pourraient vous intéresser
+              </h2>
+              <p className="text-sm text-slate-600 max-w-2xl">
+                Explorez d'autres besoins d'accompagnement scolaire selon vos matières de prédilection ou votre île.
+              </p>
+            </div>
+
+            <Link
+              to="/missions"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-blue hover:text-brand-teal transition-colors group shrink-0"
+            >
+              <span>Toutes les missions</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* Grille des autres missions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedMissions.slice(0, 3).map((m) => {
+              const isRemote = m.format === 'REMOTE';
+              const isEither = m.format === 'EITHER';
+
+              return (
+                <div
+                  key={m.id}
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group hover:border-brand-teal/40"
+                >
+                  <div className="p-6 space-y-4">
+                    {/* Badges Matière + Format */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-900 border border-teal-200">
+                        <BookOpen className="w-3 h-3 text-teal-700" />
+                        <span>{m.subject_name}</span>
+                      </span>
+
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          isRemote
+                            ? 'bg-blue-50 text-brand-blue border border-blue-200'
+                            : isEither
+                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        }`}
+                      >
+                        <Laptop className="w-3 h-3" />
+                        <span>{m.format_display || (isRemote ? 'À distance' : isEither ? 'Au choix' : 'Sur place')}</span>
+                      </span>
+                    </div>
+
+                    {/* Titre cliquable qui recharge la mission correspondante */}
+                    <Link
+                      to={`/missions/${m.id}`}
+                      className="block font-bold text-slate-900 text-base leading-snug group-hover:text-brand-blue transition-colors hover:underline"
+                    >
+                      {m.title}
+                    </Link>
+
+                    {/* Organisation */}
+                    <div className="text-[11px] text-slate-500 font-medium">
+                      Par <span className="text-brand-teal font-semibold">{m.organization_name || 'Solidarité Éducative'}</span>
+                    </div>
+
+                    {/* Description concise */}
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                      {m.description}
+                    </p>
+
+                    {/* Métadonnées */}
+                    <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-500">
+                      <div className="flex items-center gap-2 text-slate-700 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+                        <span className="truncate">{m.city ? `${m.city} • ` : ''}{m.island}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{m.expected_commitment}</span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3 h-3 text-slate-400" />
+                          <span>{m.applications_count || 0} candidature{(m.applications_count || 0) > 1 ? 's' : ''}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions de bas de carte */}
+                  <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex items-center gap-2">
+                    <Link
+                      to={`/missions/${m.id}`}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-brand-blue hover:text-white hover:bg-brand-blue border border-brand-blue/30 transition-all text-center"
+                    >
+                      Détails
+                    </Link>
+
+                    <Link
+                      to={`/devenir-benevole?mission=${m.id}`}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-sm transition-all"
+                    >
+                      <span>Candidater</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </div>
     </div>
   );

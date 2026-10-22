@@ -230,8 +230,17 @@ export interface Testimonial {
   id: number;
   name: string;
   role: string;
+  role_type?: 'VOLUNTEER' | 'STUDENT' | 'PARENT' | 'COORDINATOR';
+  role_type_display?: string;
   quote: string;
   location: string;
+  photo?: string;
+  avatar_url?: string;
+  photo_display?: string;
+  mission?: number;
+  mission_title?: string;
+  rating?: number;
+  is_featured?: boolean;
 }
 
 export interface FAQItem {

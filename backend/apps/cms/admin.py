@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import PageContent, Article, KeyMetric, Testimonial, FAQItem, ContactMessage, Partner, Milestone
 
 @admin.register(PageContent)
@@ -22,8 +23,22 @@ class KeyMetricAdmin(admin.ModelAdmin):
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ('name', 'role', 'location', 'is_featured', 'created_at')
-    list_filter = ('is_featured', 'role')
+    list_display = ('photo_preview', 'name', 'role', 'role_type', 'mission', 'rating', 'location', 'is_featured', 'is_published', 'order', 'created_at')
+    list_filter = ('role_type', 'is_featured', 'is_published', 'rating', 'mission')
+    list_editable = ('is_featured', 'is_published', 'rating', 'order')
+    search_fields = ('name', 'role', 'quote', 'location')
+    raw_id_fields = ('mission',)
+
+    def photo_preview(self, obj):
+        url = ''
+        if obj.photo:
+            url = obj.photo.url
+        elif obj.avatar_url:
+            url = obj.avatar_url
+        if url:
+            return format_html('<img src="{}" style="width: 36px; height: 36px; object-fit: cover; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" />', url)
+        return '—'
+    photo_preview.short_description = 'Photo'
 
 @admin.register(FAQItem)
 class FAQItemAdmin(admin.ModelAdmin):

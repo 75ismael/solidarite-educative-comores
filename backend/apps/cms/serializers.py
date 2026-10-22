@@ -19,9 +19,24 @@ class KeyMetricSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TestimonialSerializer(serializers.ModelSerializer):
+    role_type_display = serializers.CharField(source='get_role_type_display', read_only=True)
+    mission_title = serializers.CharField(source='mission.title', read_only=True)
+    photo_display = serializers.SerializerMethodField()
+
     class Meta:
         model = Testimonial
         fields = '__all__'
+
+    def get_photo_display(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            try:
+                if request:
+                    return request.build_absolute_uri(obj.photo.url)
+                return obj.photo.url
+            except Exception:
+                pass
+        return obj.avatar_url or ''
 
 class FAQItemSerializer(serializers.ModelSerializer):
     class Meta:

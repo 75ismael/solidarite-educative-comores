@@ -247,9 +247,13 @@ class Command(BaseCommand):
         req2.subjects.set([subject_objs['Français']])
 
         # 6. Missions publiques (F04 anonymisées style JeVeuxAider)
-        mission1, _ = PublicMission.objects.get_or_create(
-            title="Je suis étudiant et je réalise du tutorat en collège 2h/semaine",
-            defaults={
+        mission1 = PublicMission.objects.filter(
+            title="Je suis étudiant et je réalise du tutorat en collège 2h/semaine"
+        ).first()
+        if not mission1:
+            mission1, _ = PublicMission.objects.get_or_create(
+                title="Je suis étudiant et je réalise du tutorat en collège 2h/semaine",
+                defaults={
                 'published_by': "Ebru B., Ayoub B.",
                 'organization_name': "Solidarité Éducative Comores",
                 'organization_description': "Créée pour lutter contre les fractures scolaires, Solidarité Éducative agit à travers des programmes d'accompagnement bénévole en ligne et en présentiel dans les établissements partenaires aux Comores. Notre méthode simple et éprouvée : un bénévole accompagne 1h30 à 2h par semaine un élève pour consolider ses bases, développer sa méthode et lui redonner confiance.",
@@ -283,11 +287,15 @@ Il n'y a pas d'accompagnement les dimanches et jours fériés.""",
                 'related_request': req2,
                 'deadline': date.today() + timedelta(days=21)
             }
-        )
+            )
 
-        mission2, _ = PublicMission.objects.get_or_create(
-            title="Accompagnement en Sciences Physiques - Lycée (Terminale C/D)",
-            defaults={
+        mission2 = PublicMission.objects.filter(
+            title="Accompagnement en Sciences Physiques - Lycée (Terminale C/D)"
+        ).first()
+        if not mission2:
+            mission2, _ = PublicMission.objects.get_or_create(
+                title="Accompagnement en Sciences Physiques - Lycée (Terminale C/D)",
+                defaults={
                 'published_by': "Dr. Nassim M., Coordination Bac",
                 'organization_name': "Lycée Saïd Mohamed Cheikh",
                 'organization_description': "Établissement d'enseignement secondaire de référence aux Comores, partenaire du réseau Solidarité Éducative pour le mentorat des séries scientifiques.",
@@ -436,23 +444,83 @@ Il n'y a pas d'accompagnement les dimanches et jours fériés.""",
             }
         )
 
-        Testimonial.objects.get_or_create(
-            name="Mme Fatima I.",
-            role="Parent d'élève à Moroni",
+        Testimonial.objects.update_or_create(
+            name="Fatima Ibrahim",
             defaults={
-                'quote': "Grâce au bénévole qui aide mon fils chaque samedi, ses notes en mathématiques ont augmenté et il a repris confiance avant son examen du brevet. Un immense merci !",
-                'location': 'Grande Comore',
-                'is_featured': True
+                'role': "Parent d'élève au collège Moroni Sud",
+                'role_type': Testimonial.RoleType.PARENT,
+                'quote': "Grâce au bénévole qui aide mon fils chaque samedi en français et méthodologie, ses notes ont grimpé de 4 points et il a repris confiance avant son examen du Brevet. Un immense soulagement pour notre famille !",
+                'avatar_url': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+                'location': 'Moroni, Grande Comore',
+                'mission': mission1,
+                'rating': 5,
+                'is_featured': True,
+                'is_published': True,
+                'order': 1,
             }
         )
 
-        Testimonial.objects.get_or_create(
-            name="Aminata M.",
-            role="Bénévole étudiante",
+        Testimonial.objects.update_or_create(
+            name="Aminata Mohamed",
             defaults={
-                'quote': "Être bénévole pour les élèves aux Comores depuis la France me permet de garder un lien fort avec mon pays d'origine et d'avoir un impact direct et concret.",
-                'location': 'France (Diaspora)',
-                'is_featured': True
+                'role': "Étudiante en Master FLE & Tutrice bénévole",
+                'role_type': Testimonial.RoleType.VOLUNTEER,
+                'quote': "Accompagner un élève 2h par semaine à distance est l'expérience la plus gratifiante de mon parcours étudiant. Les outils sont fluides, l'équipe sur place aux Comores est disponible, et voir les progrès en direct est formidable.",
+                'avatar_url': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+                'location': 'Lyon (Diaspora) & Moroni',
+                'mission': mission1,
+                'rating': 5,
+                'is_featured': True,
+                'is_published': True,
+                'order': 2,
+            }
+        )
+
+        Testimonial.objects.update_or_create(
+            name="Youssouf Ali",
+            defaults={
+                'role': "Professeur certifié & Mentor bénévole",
+                'role_type': Testimonial.RoleType.VOLUNTEER,
+                'quote': "La plateforme permet un suivi pédagogique rigoureux. Je prépare les fiches de révision et partage des exercices concrets. Le décalage horaire se gère facilement et l'impact sur l'estime de l'enfant est immédiat.",
+                'avatar_url': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+                'location': 'Marseille & Iconi',
+                'mission': mission1,
+                'rating': 5,
+                'is_featured': True,
+                'is_published': True,
+                'order': 3,
+            }
+        )
+
+        Testimonial.objects.update_or_create(
+            name="Nassim K.",
+            defaults={
+                'role': "Élève de 3ème accompagné (Session 2026)",
+                'role_type': Testimonial.RoleType.STUDENT,
+                'quote': "Avant je bloquais sur les rédactions et la grammaire. Mon tuteur m'explique calmement sans me juger. Maintenant j'ose lever la main en classe et je vise la mention au Brevet !",
+                'avatar_url': 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80',
+                'location': 'Mitsamiouli, Ngazidja',
+                'mission': mission1,
+                'rating': 5,
+                'is_featured': True,
+                'is_published': True,
+                'order': 4,
+            }
+        )
+
+        Testimonial.objects.update_or_create(
+            name="Aïcha Daoud",
+            defaults={
+                'role': "Ingénieure télécoms & Bénévole Mathématiques",
+                'role_type': Testimonial.RoleType.VOLUNTEER,
+                'quote': "Transmettre la passion des sciences aux collégiennes comoriennes me tient à cœur. Solidarité Éducative offre un cadre transparent et sécurisé pour s'engager utilement.",
+                'avatar_url': 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+                'location': 'Paris 14e',
+                'mission': mission2,
+                'rating': 5,
+                'is_featured': True,
+                'is_published': True,
+                'order': 5,
             }
         )
 

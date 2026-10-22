@@ -64,17 +64,42 @@ class KeyMetric(models.Model):
         return f"{self.label} : {self.value}"
 
 class Testimonial(models.Model):
+    class RoleType(models.TextChoices):
+        VOLUNTEER = 'VOLUNTEER', 'Bénévole / Tuteur'
+        STUDENT = 'STUDENT', 'Élève / Étudiant accompagné'
+        PARENT = 'PARENT', 'Parent d\'élève'
+        COORDINATOR = 'COORDINATOR', 'Équipe encadrante / Partenaire'
+
     name = models.CharField('Nom / Prénom', max_length=100)
-    role = models.CharField('Statut (ex: Parent à Moroni, Bénévole en Mathématiques)', max_length=100)
+    role = models.CharField('Statut (ex: Parent à Moroni, Bénévole en Mathématiques)', max_length=150)
+    role_type = models.CharField(
+        'Type d\'intervenant',
+        max_length=20,
+        choices=RoleType.choices,
+        default=RoleType.VOLUNTEER
+    )
     quote = models.TextField('Témoignage')
+    photo = models.ImageField('Photo de profil (upload)', upload_to='testimonials/', blank=True, null=True)
+    avatar_url = models.URLField('URL externe photo / avatar', blank=True, help_text="Lien image ou photo hébergée")
     location = models.CharField('Localité (ex: Moroni, Anjouan, Paris)', max_length=100, blank=True)
+    mission = models.ForeignKey(
+        'volunteering.PublicMission',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='testimonials',
+        verbose_name='Mission associée'
+    )
+    rating = models.PositiveSmallIntegerField('Note / Satisfaction (1 à 5)', default=5)
     is_featured = models.BooleanField('Mettre en avant sur l\'accueil', default=True)
+    is_published = models.BooleanField('Publié sur le site', default=True)
+    order = models.PositiveIntegerField('Ordre d\'affichage', default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Témoignage'
         verbose_name_plural = 'Témoignages'
-        ordering = ['-created_at']
+        ordering = ['order', '-created_at']
 
     def __str__(self):
         return f"{self.name} ({self.role})"

@@ -48,9 +48,18 @@ class KeyMetricListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 class TestimonialListView(generics.ListAPIView):
-    queryset = Testimonial.objects.filter(is_featured=True)
     serializer_class = TestimonialSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        qs = Testimonial.objects.filter(is_published=True)
+        mission_id = self.request.query_params.get('mission') or self.request.query_params.get('mission_id')
+        if mission_id:
+            mission_testimonials = qs.filter(mission_id=mission_id)
+            if mission_testimonials.exists():
+                return mission_testimonials.order_by('order', '-created_at')
+        # Si aucun témoignage spécifique ou pas de filtre, renvoyer les témoignages en avant et récents
+        return qs.order_by('order', '-created_at')
 
 class FAQItemListView(generics.ListAPIView):
     queryset = FAQItem.objects.filter(is_published=True)
