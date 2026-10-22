@@ -20,6 +20,7 @@ import {
   Award,
   ArrowRight,
   PlusCircle,
+  LayoutDashboard,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -105,49 +106,92 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* 1. Bandeau supérieur officiel & protection */}
+      {/* ── 1. Bandeau supérieur : Mon compte + Publier une mission + Protection ── */}
       <aside aria-label="Bandeau officiel" className="bg-slate-900 text-slate-300 text-xs border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4">
+
+          {/* Gauche : statut plateforme */}
           <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-            <span className="relative flex h-2 w-2">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="font-medium text-slate-300 hidden md:inline">
-              Plateforme associative solidaire • Soutien scolaire gratuit Comores - France
+            <span className="font-medium text-slate-400 hidden md:inline">
+              Plateforme associative &bull; Soutien scolaire gratuit Comores &ndash; France
             </span>
-            <span className="font-medium text-slate-300 md:hidden">
-              Soutien scolaire Comores • France
+            <span className="font-medium text-slate-400 md:hidden">
+              Solidarité Éducative
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] sm:text-xs">
+          {/* Droite : actions rapides */}
+          <div className="flex items-center gap-1 sm:gap-3">
+
+            {/* Mon compte / Connexion */}
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/dashboard"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <LayoutDashboard className="w-3 h-3 text-slate-400" />
+                  <span>Mon compte</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-rose-300 hover:bg-slate-800 transition-colors cursor-pointer"
+                  title="Se déconnecter"
+                >
+                  <LogOut className="w-3 h-3" />
+                  <span className="hidden md:inline">Déconnexion</span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <UserIcon className="w-3 h-3 text-slate-400" />
+                <span>Mon compte</span>
+              </Link>
+            )}
+
+            <span className="text-slate-700">|</span>
+
+            {/* Publier une mission */}
             <Link
-              to="/devenir-benevole"
-              className="hidden sm:inline-flex items-center gap-1 text-slate-300 hover:text-white transition-colors"
+              to="/publier-mission"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                isCurrent('/publier-mission')
+                  ? 'bg-teal-700 text-white'
+                  : 'text-teal-300 hover:text-white hover:bg-teal-800'
+              }`}
             >
-              <span>Rejoindre comme bénévole</span>
+              <PlusCircle className="w-3 h-3" />
+              <span className="hidden sm:inline">Publier une mission</span>
+              <span className="sm:hidden">Publier</span>
             </Link>
 
-            <span className="hidden sm:inline text-slate-600">|</span>
+            <span className="text-slate-700">|</span>
 
+            {/* Protection mineurs */}
             <Link
               to="/signalement-protection"
-              className="inline-flex items-center gap-1.5 text-rose-300 hover:text-rose-200 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 text-[11px] text-rose-300 hover:text-rose-200 font-semibold transition-colors"
               title="Canal confidentiel de protection des mineurs"
             >
               <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-              <span>Protection des mineurs</span>
+              <span className="hidden sm:inline">Protection des mineurs</span>
             </Link>
           </div>
         </div>
       </aside>
 
-      {/* 2. Header & Barre de navigation principale */}
+      {/* ── 2. Header & Navigation principale ── */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-sm transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3 lg:gap-6">
-            
+
             {/* Logo & Identité */}
             <Link
               to="/"
@@ -223,7 +267,7 @@ export const Navbar: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-xs font-bold text-slate-900 group-hover:text-brand-teal transition-colors">
-                          À Propos & Histoire
+                          À Propos &amp; Histoire
                         </div>
                         <div className="text-[11px] text-slate-500 leading-snug">
                           Notre mission, genèse associative et équipe
@@ -282,7 +326,7 @@ export const Navbar: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-xs font-bold text-slate-900 group-hover:text-rose-700 transition-colors">
-                          Charte Éthique & Mineurs
+                          Charte Éthique &amp; Mineurs
                         </div>
                         <div className="text-[11px] text-slate-500 leading-snug">
                           Cadre déontologique et sauvegarde des élèves
@@ -302,18 +346,6 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 Missions
-              </Link>
-
-              <Link
-                to="/publier-mission"
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${
-                  isCurrent('/publier-mission')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
-                }`}
-              >
-                <PlusCircle className="w-4 h-4" />
-                Publier une mission
               </Link>
 
               <Link
@@ -352,7 +384,6 @@ export const Navbar: React.FC = () => {
 
             {/* Actions Desktop (Droite) */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
-              {/* Bouton Faire un don */}
               <Link
                 to="/transparence#faire-un-don"
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all"
@@ -362,46 +393,13 @@ export const Navbar: React.FC = () => {
                 <span>Faire un don</span>
               </Link>
 
-              {isAuthenticated ? (
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-                  <Link
-                    to="/dashboard"
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors border border-slate-200/80"
-                  >
-                    <div className="w-5 h-5 rounded-full bg-brand-blue text-white flex items-center justify-center text-[10px]">
-                      <UserIcon className="w-3 h-3" />
-                    </div>
-                    <span>Mon Espace ({user?.role_display?.split(' ')[0] || 'Membre'})</span>
-                  </Link>
-
-                  <button
-                    onClick={handleLogout}
-                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                    title="Se déconnecter"
-                    aria-label="Se déconnecter"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-brand-teal hover:bg-slate-50 rounded-xl transition-colors"
-                  >
-                    <UserIcon className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Connexion</span>
-                  </Link>
-
-                  <Link
-                    to="/demande-soutien"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-sm hover:shadow transition-all"
-                  >
-                    <span>Demander de l'aide</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
-                  </Link>
-                </div>
-              )}
+              <Link
+                to="/demande-soutien"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-sm hover:shadow transition-all"
+              >
+                <span>Demander de l'aide</span>
+                <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
+              </Link>
             </div>
 
             {/* Mobile Actions Header */}
@@ -413,23 +411,6 @@ export const Navbar: React.FC = () => {
                 <Heart className="w-3 h-3 fill-white" />
                 <span>Don</span>
               </Link>
-
-              {isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="p-2 rounded-xl bg-slate-100 text-brand-blue hover:bg-slate-200 transition-colors"
-                  title="Mon Espace"
-                >
-                  <UserIcon className="w-5 h-5" />
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  className="px-2.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors"
-                >
-                  Connexion
-                </Link>
-              )}
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -444,10 +425,10 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* 3. Mobile Backdrop + Drawer Navigation (directement accroché sous le header sticky) */}
+        {/* ── 3. Mobile Drawer ── */}
         {mobileMenuOpen && (
           <div className="lg:hidden">
-            {/* Overlay flou cliquable */}
+            {/* Overlay */}
             <div
               className="fixed inset-0 top-16 bg-slate-900/50 backdrop-blur-sm z-40"
               onClick={() => setMobileMenuOpen(false)}
@@ -456,23 +437,40 @@ export const Navbar: React.FC = () => {
 
             {/* Tiroir coulissant */}
             <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-2xl px-5 pt-3 pb-8 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto z-50">
-              {/* Raccourcis d'actions rapides */}
+
+              {/* ── Mon compte + Publier (tout en haut du drawer) ── */}
               <div className="grid grid-cols-2 gap-2 pt-1">
+                {isAuthenticated ? (
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-brand-blue text-white font-bold text-xs shadow-sm"
+                  >
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <span>Mon compte</span>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors"
+                  >
+                    <UserIcon className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Mon compte</span>
+                  </Link>
+                )}
+
                 <Link
-                  to="/demande-soutien"
+                  to="/publier-mission"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-brand-blue text-white font-bold text-xs shadow-sm"
+                  className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-bold text-xs shadow-sm transition-colors ${
+                    isCurrent('/publier-mission')
+                      ? 'bg-brand-teal text-white'
+                      : 'bg-teal-50 border border-teal-200 text-brand-teal hover:bg-teal-100'
+                  }`}
                 >
-                  <span>Demander de l'aide</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
-                </Link>
-                <Link
-                  to="/devenir-benevole"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-teal-50 border border-teal-200 text-brand-teal font-bold text-xs"
-                >
-                  <HeartHandshake className="w-3.5 h-3.5" />
-                  <span>Devenir bénévole</span>
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Publier mission</span>
                 </Link>
               </div>
 
@@ -517,7 +515,7 @@ export const Navbar: React.FC = () => {
                         }`}
                       >
                         <Info className="w-4 h-4 text-brand-teal" />
-                        <span>À Propos & Histoire</span>
+                        <span>À Propos &amp; Histoire</span>
                       </Link>
                       <Link
                         to="/programmes"
@@ -547,7 +545,7 @@ export const Navbar: React.FC = () => {
                         }`}
                       >
                         <ShieldCheck className="w-4 h-4 text-rose-600" />
-                        <span>Charte Éthique & Mineurs</span>
+                        <span>Charte Éthique &amp; Mineurs</span>
                       </Link>
                     </div>
                   )}
@@ -565,17 +563,6 @@ export const Navbar: React.FC = () => {
                 </Link>
 
                 <Link
-                  to="/publier-mission"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/publier-mission') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <PlusCircle className="w-4 h-4 text-brand-teal" />
-                  <span>Publier une mission</span>
-                </Link>
-
-                <Link
                   to="/actualites"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
@@ -583,7 +570,7 @@ export const Navbar: React.FC = () => {
                   }`}
                 >
                   <FileText className="w-4 h-4 text-slate-400" />
-                  <span>Actualités & Bilans</span>
+                  <span>Actualités &amp; Bilans</span>
                 </Link>
 
                 <Link
@@ -594,7 +581,7 @@ export const Navbar: React.FC = () => {
                   }`}
                 >
                   <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  <span>Transparence & Dons</span>
+                  <span>Transparence &amp; Dons</span>
                 </Link>
 
                 <Link
@@ -605,10 +592,10 @@ export const Navbar: React.FC = () => {
                   }`}
                 >
                   <PhoneCall className="w-4 h-4 text-slate-400" />
-                  <span>Contact & Relais locaux</span>
+                  <span>Contact &amp; Relais locaux</span>
                 </Link>
 
-                {/* Protection des mineurs (Encart d'alerte bienveillant) */}
+                {/* Protection mineurs */}
                 <div className="pt-2">
                   <Link
                     to="/signalement-protection"
@@ -621,7 +608,7 @@ export const Navbar: React.FC = () => {
                 </div>
               </div>
 
-              {/* Section Compte & Soutien */}
+              {/* Section CTAs + Déconnexion */}
               <div className="pt-4 border-t border-slate-100 space-y-2.5">
                 <Link
                   to="/transparence#faire-un-don"
@@ -632,38 +619,34 @@ export const Navbar: React.FC = () => {
                   <span>Faire un don solidaire</span>
                 </Link>
 
-                {isAuthenticated ? (
-                  <div className="space-y-2">
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm shadow-sm"
-                    >
-                      <UserIcon className="w-4 h-4" />
-                      <span>Mon Espace ({user?.role_display?.split(' ')[0] || 'Membre'})</span>
-                    </Link>
+                <Link
+                  to="/demande-soutien"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm shadow-sm"
+                >
+                  <span>Demander de l'aide</span>
+                  <ArrowRight className="w-4 h-4 text-teal-300" />
+                </Link>
 
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      className="w-full text-center py-2 text-rose-600 text-xs font-semibold hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
-                    >
-                      Se déconnecter
-                    </button>
-                  </div>
-                ) : (
-                  <div className="pt-1">
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors"
-                    >
-                      <UserIcon className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Se connecter à mon compte</span>
-                    </Link>
-                  </div>
+                <Link
+                  to="/devenir-benevole"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-brand-teal font-bold text-xs"
+                >
+                  <HeartHandshake className="w-3.5 h-3.5" />
+                  <span>Devenir bénévole</span>
+                </Link>
+
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-center py-2 text-rose-600 text-xs font-semibold hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
+                  >
+                    Se déconnecter
+                  </button>
                 )}
               </div>
             </div>
