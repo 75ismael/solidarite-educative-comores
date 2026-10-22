@@ -18,6 +18,7 @@ import { ImpactReportPage } from './pages/public/ImpactReportPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { DashboardRouter } from './pages/dashboard/DashboardRouter';
 import { MaintenancePage } from './pages/public/MaintenancePage';
+import { PublishMissionPage } from './pages/public/PublishMissionPage';
 
 export const App: React.FC = () => {
   return (
@@ -31,6 +32,7 @@ export const App: React.FC = () => {
             <Route path="charte-ethique" element={<SafeguardingCharterPage />} />
             <Route path="missions" element={<PublicMissionsPage />} />
             <Route path="missions/:id" element={<MissionDetailPage />} />
+            <Route path="publier-mission" element={<PublishMissionPage />} />
             <Route path="actualites" element={<ArticlesPage />} />
             <Route path="transparence" element={<TransparencyPage />} />
             <Route path="rapport-impact" element={<ImpactReportPage />} />

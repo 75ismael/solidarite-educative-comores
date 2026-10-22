@@ -19,6 +19,7 @@ import {
   PhoneCall,
   Award,
   ArrowRight,
+  PlusCircle,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -304,6 +305,18 @@ export const Navbar: React.FC = () => {
               </Link>
 
               <Link
+                to="/publier-mission"
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${
+                  isCurrent('/publier-mission')
+                    ? 'text-brand-teal font-bold bg-teal-50/80'
+                    : 'hover:text-brand-blue hover:bg-slate-50'
+                }`}
+              >
+                <PlusCircle className="w-4 h-4" />
+                Publier une mission
+              </Link>
+
+              <Link
                 to="/actualites"
                 className={`px-3 py-2 rounded-lg transition-colors ${
                   isCurrent('/actualites')
@@ -549,6 +562,17 @@ export const Navbar: React.FC = () => {
                 >
                   <HeartHandshake className="w-4 h-4 text-brand-teal" />
                   <span>Missions de bénévolat</span>
+                </Link>
+
+                <Link
+                  to="/publier-mission"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                    isCurrent('/publier-mission') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <PlusCircle className="w-4 h-4 text-brand-teal" />
+                  <span>Publier une mission</span>
                 </Link>
 
                 <Link

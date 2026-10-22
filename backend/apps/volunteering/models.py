@@ -61,6 +61,56 @@ class PublicMission(models.Model):
         FILLED = 'FILLED', 'Pourvue'
         CLOSED = 'CLOSED', 'Clôturée'
 
+    class PublisherType(models.TextChoices):
+        ORGANIZATION = 'ORGANIZATION', 'Organisation / Entreprise / Établissement'
+        INDIVIDUAL = 'INDIVIDUAL', 'Particulier / Parent d\'élève / Autre'
+
+    class OrganizationType(models.TextChoices):
+        PUBLIC_SCHOOL = 'PUBLIC_SCHOOL', 'École ou Établissement public'
+        PRIVATE_SCHOOL = 'PRIVATE_SCHOOL', 'Établissement scolaire privé'
+        ASSOCIATION = 'ASSOCIATION', 'Association / ONG / Collectif'
+        ENTERPRISE = 'ENTERPRISE', 'Entreprise / Mécénat'
+        COMMUNITY = 'COMMUNITY', 'Collectivité locale / Mairie'
+        OTHER = 'OTHER', 'Autre organisation'
+
+    class IndividualRole(models.TextChoices):
+        PARENT = 'PARENT', 'Parent d\'élève / Famille'
+        STUDENT = 'STUDENT', 'Élève / Étudiant'
+        TEACHER = 'TEACHER', 'Enseignant indépendant'
+        CITIZEN = 'CITIZEN', 'Citoyen engagé / Autre'
+
+    # Informations publiant
+    publisher_type = models.CharField(
+        'Type de publiant',
+        max_length=20,
+        choices=PublisherType.choices,
+        default=PublisherType.ORGANIZATION
+    )
+    organization_type = models.CharField(
+        'Type d\'organisation',
+        max_length=30,
+        choices=OrganizationType.choices,
+        default=OrganizationType.PUBLIC_SCHOOL,
+        blank=True
+    )
+    individual_role = models.CharField(
+        'Rôle du particulier',
+        max_length=30,
+        choices=IndividualRole.choices,
+        default=IndividualRole.PARENT,
+        blank=True
+    )
+    contact_email = models.EmailField('Email de contact', blank=True)
+    contact_phone = models.CharField('Téléphone / WhatsApp', max_length=50, blank=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_missions',
+        verbose_name='Utilisateur créateur'
+    )
+
     title = models.CharField('Intitulé de la mission', max_length=255)
     published_by = models.CharField('Publié par (référents)', max_length=150, default="Coordination Pédagogique")
     organization_name = models.CharField("Nom de l'organisation", max_length=150, default="Solidarité Éducative Comores")

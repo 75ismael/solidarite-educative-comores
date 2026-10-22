@@ -98,9 +98,18 @@ export interface VolunteerProfile {
 export interface PublicMission {
   id: number;
   title: string;
+  publisher_type?: 'ORGANIZATION' | 'INDIVIDUAL';
+  publisher_type_display?: string;
+  organization_type?: 'PUBLIC_SCHOOL' | 'PRIVATE_SCHOOL' | 'ASSOCIATION' | 'ENTERPRISE' | 'COMMUNITY' | 'OTHER';
+  organization_type_display?: string;
+  individual_role?: 'PARENT' | 'STUDENT' | 'TEACHER' | 'CITIZEN';
+  individual_role_display?: string;
   published_by?: string;
   organization_name?: string;
   organization_description?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  creator?: number;
   activity_type?: string;
   target_public?: string;
   subject: number;

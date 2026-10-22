@@ -28,12 +28,19 @@ class PublicMissionSerializer(serializers.ModelSerializer):
     subject_name = serializers.CharField(source='subject.name', read_only=True)
     format_display = serializers.CharField(source='get_format_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    publisher_type_display = serializers.CharField(source='get_publisher_type_display', read_only=True)
+    organization_type_display = serializers.CharField(source='get_organization_type_display', read_only=True)
+    individual_role_display = serializers.CharField(source='get_individual_role_display', read_only=True)
     applications_count = serializers.IntegerField(source='applications.count', read_only=True)
 
     class Meta:
         model = PublicMission
         fields = [
-            'id', 'title', 'published_by', 'organization_name', 'organization_description',
+            'id', 'title', 'publisher_type', 'publisher_type_display',
+            'organization_type', 'organization_type_display',
+            'individual_role', 'individual_role_display',
+            'published_by', 'organization_name', 'organization_description',
+            'contact_email', 'contact_phone', 'creator',
             'activity_type', 'target_public', 'subject', 'subject_name', 'school_level',
             'island', 'city', 'intervention_zone_details', 'format', 'format_display',
             'prerequisites', 'description', 'presentation_full', 'steps_to_join',

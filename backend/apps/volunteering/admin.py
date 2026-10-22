@@ -10,16 +10,21 @@ class VolunteerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(PublicMission)
 class PublicMissionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'organization_name', 'subject', 'school_level', 'island', 'format', 'status', 'created_at')
-    list_filter = ('status', 'island', 'format', 'subject', 'organization_name')
-    search_fields = ('title', 'description', 'city', 'organization_name', 'published_by')
+    list_display = ('title', 'publisher_type', 'organization_name', 'published_by', 'subject', 'school_level', 'island', 'mentors_needed', 'status', 'created_at')
+    list_filter = ('publisher_type', 'organization_type', 'individual_role', 'status', 'island', 'format', 'subject')
+    search_fields = ('title', 'description', 'city', 'organization_name', 'published_by', 'contact_email')
+    raw_id_fields = ('creator', 'related_request')
 
     fieldsets = (
-        ("En-tête & Organisation", {
-            'fields': ('title', 'published_by', 'organization_name', 'organization_description', 'status')
+        ("Type de Publiant & Structure", {
+            'fields': (
+                'publisher_type', 'organization_type', 'individual_role',
+                'published_by', 'organization_name', 'organization_description',
+                'contact_email', 'contact_phone', 'creator', 'status'
+            )
         }),
-        ("Typologie & Public", {
-            'fields': ('activity_type', 'target_public', 'subject', 'school_level', 'prerequisites')
+        ("Détails de la mission", {
+            'fields': ('title', 'activity_type', 'target_public', 'subject', 'school_level', 'prerequisites')
         }),
         ("Localisation & Format", {
             'fields': ('format', 'island', 'city', 'intervention_zone_details')
@@ -27,8 +32,8 @@ class PublicMissionAdmin(admin.ModelAdmin):
         ("Contenu Rédactionnel & Présentation (JeVeuxAider / CMS)", {
             'fields': ('description', 'presentation_full', 'steps_to_join', 'practical_details', 'benefits')
         }),
-        ("Modalités & Calendrier", {
-            'fields': ('expected_commitment', 'deadline', 'related_request')
+        ("Objectifs, Rythme & Calendrier", {
+            'fields': ('mentors_needed', 'expected_commitment', 'start_date', 'end_date', 'deadline', 'related_request')
         }),
     )
 

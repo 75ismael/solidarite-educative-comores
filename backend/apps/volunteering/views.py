@@ -53,17 +53,19 @@ class VolunteerProfileDetailView(generics.RetrieveUpdateAPIView):
 
 class PublicMissionListView(generics.ListCreateAPIView):
     serializer_class = PublicMissionSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            return [permissions.IsAuthenticated()]
-        return [permissions.AllowAny()]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         # Pour le public, uniquement les missions ouvertes
-        if not self.request.user.is_authenticated or self.request.user.role not in ['ADMIN', 'COORDINATOR']:
+        if not self.request.user.is_authenticated or getattr(self.request.user, 'role', None) not in ['ADMIN', 'COORDINATOR']:
             return PublicMission.objects.filter(status=PublicMission.Status.OPEN)
         return PublicMission.objects.all()
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(creator=self.request.user)
+        else:
+            serializer.save()
 
 class PublicMissionDetailView(generics.RetrieveUpdateAPIView):
     queryset = PublicMission.objects.all()
