@@ -84,6 +84,7 @@ const DEMO_MISSIONS: Record<string, PublicMission> = {
     practical_details: "Vous n'êtes pas seuls ! Notre équipe vous accueille dans l'établissement que vous avez choisi, suit votre accompagnement de manière bienveillante.\nIl n'y a pas d'accompagnement le week-end.",
     benefits: '⚡ Vous recevrez une attestation des compétences transverses développées tout du long de cet engagement bénévole.',
     expected_commitment: '2h par semaine',
+    mentors_needed: 4,
     status: 'OPEN', status_display: 'Mission ouverte',
     deadline: '2026-11-20',
     start_date: '2026-11-03',
@@ -112,6 +113,7 @@ const DEMO_MISSIONS: Record<string, PublicMission> = {
     practical_details: "Séances de 2h le samedi matin ou créneaux flexibles en semaine en distanciel.",
     benefits: "Attestation de mentorat scientifique officiel reconnue par le réseau des établissements partenaires.",
     expected_commitment: '2h par semaine',
+    mentors_needed: 3,
     status: 'OPEN', status_display: 'Mission ouverte',
     deadline: '2026-11-30',
     start_date: '2026-11-15',
@@ -140,6 +142,7 @@ const DEMO_MISSIONS: Record<string, PublicMission> = {
     practical_details: "Intervention sur place le mardi et jeudi de 16h à 17h30 dans les locaux de l'école.",
     benefits: "Formation à l'animation d'ateliers lecture et convention de bénévolat éducatif.",
     expected_commitment: '1h30 par semaine',
+    mentors_needed: 5,
     status: 'OPEN', status_display: 'Mission ouverte',
     deadline: '2026-11-25',
     start_date: '2026-11-10',
@@ -168,6 +171,7 @@ const DEMO_MISSIONS: Record<string, PublicMission> = {
     practical_details: "1h30 hebdomadaire sur créneau convenu ensemble selon les connexions réseau.",
     benefits: "Contribution à fort impact solidaire et valorisation de votre engagement territorial.",
     expected_commitment: '1h30 à 2h par semaine',
+    mentors_needed: 3,
     status: 'OPEN', status_display: 'Mission ouverte',
     deadline: '2026-12-05',
     start_date: '2026-11-12',
@@ -246,12 +250,6 @@ function formatDateShort(dateStr?: string | null): string {
     return dateStr;
   }
 }
-
-const STATUS_CONFIG = {
-  ACCEPTED: { label: 'Retenue', bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200', dot: 'bg-emerald-500' },
-  PENDING:  { label: 'En cours', bg: 'bg-amber-100',   text: 'text-amber-800',   border: 'border-amber-200',   dot: 'bg-amber-500'  },
-  DECLINED: { label: 'Non retenue', bg: 'bg-rose-100', text: 'text-rose-800',   border: 'border-rose-200',   dot: 'bg-rose-400'   },
-};
 
 const TestimonialAvatar: React.FC<{ testimonial: Testimonial }> = ({ testimonial }) => {
   const [imgError, setImgError] = useState(false);
@@ -372,8 +370,9 @@ export const MissionDetailPage: React.FC = () => {
     );
   }
 
-  const acceptedCount = applications.filter(a => a.status === 'ACCEPTED').length;
-  const pendingCount = applications.filter(a => a.status === 'PENDING').length;
+  const mentorsTarget = mission.mentors_needed || 3;
+  const mobilizedCount = applications.length;
+  const progressPercent = Math.min(100, Math.round((mobilizedCount / mentorsTarget) * 100));
 
   return (
     <div className="bg-brand-light min-h-screen">
@@ -439,7 +438,7 @@ export const MissionDetailPage: React.FC = () => {
           <div className="lg:col-span-2 space-y-5">
 
             {/* Carte méta-infos rapides */}
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 grid grid-cols-2 sm:grid-cols-5 gap-4">
               <div className="space-y-1 text-center sm:text-left">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Localisation</div>
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1 justify-center sm:justify-start">
@@ -452,6 +451,13 @@ export const MissionDetailPage: React.FC = () => {
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1 justify-center sm:justify-start">
                   <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                   <span>{mission.expected_commitment}</span>
+                </div>
+              </div>
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mentorats visés</div>
+                <div className="text-xs font-bold text-brand-blue flex items-center gap-1 justify-center sm:justify-start">
+                  <GraduationCap className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+                  <span>{mentorsTarget} bénévole{mentorsTarget > 1 ? 's' : ''}</span>
                 </div>
               </div>
               <div className="space-y-1 text-center sm:text-left">
@@ -663,91 +669,123 @@ export const MissionDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Légende statuts */}
-              <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100">
-                <div className="text-center space-y-1">
-                  <div className="text-base font-extrabold text-emerald-700">{acceptedCount}</div>
-                  <div className="text-[10px] font-semibold text-slate-500">Retenue{acceptedCount > 1 ? 's' : ''}</div>
+              {/* Nombre de mentorats souhaités + Jauge de mobilisation */}
+              <div className="pt-3 border-t border-slate-100 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-600 font-semibold flex items-center gap-1.5">
+                    <GraduationCap className="w-4 h-4 text-brand-teal shrink-0" />
+                    Mentorats souhaités
+                  </span>
+                  <span className="font-extrabold text-brand-blue bg-teal-50 px-2.5 py-0.5 rounded-full text-xs border border-teal-200">
+                    Objectif : {mentorsTarget} {mentorsTarget > 1 ? 'mentors' : 'mentor'}
+                  </span>
                 </div>
-                <div className="text-center space-y-1">
-                  <div className="text-base font-extrabold text-amber-600">{pendingCount}</div>
-                  <div className="text-[10px] font-semibold text-slate-500">En cours</div>
-                </div>
-                <div className="text-center space-y-1">
-                  <div className="text-base font-extrabold text-slate-400">{applications.filter(a => a.status === 'DECLINED').length}</div>
-                  <div className="text-[10px] font-semibold text-slate-500">Non retenue{applications.filter(a => a.status === 'DECLINED').length > 1 ? 's' : ''}</div>
+
+                <div className="space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                  <div className="w-full bg-slate-200/80 h-2.5 rounded-full overflow-hidden p-0.5">
+                    <div
+                      className="bg-gradient-to-r from-brand-blue via-teal-600 to-emerald-500 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500">
+                    <span>
+                      <strong className="text-slate-800">{mobilizedCount}</strong> bénévole{mobilizedCount > 1 ? 's' : ''} mobilisé{mobilizedCount > 1 ? 's' : ''}
+                    </span>
+                    <span className="font-bold text-brand-teal">{progressPercent}% atteint</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* ── LISTE DES CANDIDATS ── */}
+            {/* ── LISTE DES PROFILS MOBILISÉS (POUR INSPIRER D'AUTRES CANDIDATS) ── */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-                  <Users className="w-4 h-4 text-brand-teal" />
-                  Personnes qui postulent
-                </h3>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                    <Users className="w-4 h-4 text-brand-teal" />
+                    Bénévoles déjà mobilisés
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Ils ont proposé leur aide pour cette mission
+                  </p>
+                </div>
+                <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-teal-50 text-brand-teal border border-teal-200">
                   {applications.length}
                 </span>
               </div>
 
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-slate-100">
                 {applications.map((app) => {
-                  const cfg = STATUS_CONFIG[app.status] || STATUS_CONFIG.PENDING;
                   const initials = (app.volunteer_name || 'B').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
                   return (
                     <div key={app.id} className="p-4 sm:p-5 hover:bg-slate-50/60 transition-colors space-y-3">
-                      {/* Identité + Statut */}
+                      {/* Identité bénévole + Badge de mobilisation */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-blue to-teal-700 text-white flex items-center justify-center font-extrabold text-xs shrink-0">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-blue to-teal-700 text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-sm">
                             {initials}
                           </div>
                           <div>
                             <div className="text-xs font-bold text-slate-900">{app.volunteer_name}</div>
                             {app.volunteer_city && (
                               <div className="text-[11px] text-slate-500 flex items-center gap-1">
-                                <MapPin className="w-3 h-3" />
-                                {app.volunteer_city}
+                                <MapPin className="w-3 h-3 text-brand-teal shrink-0" />
+                                <span>{app.volunteer_city}</span>
                               </div>
                             )}
                           </div>
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${cfg.bg} ${cfg.text} ${cfg.border} shrink-0`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}></span>
-                          {cfg.label}
+
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200 shrink-0">
+                          <Sparkles className="w-3 h-3 text-teal-600" />
+                          <span>Bénévole mobilisé</span>
                         </span>
                       </div>
 
-                      {/* Dates disponibilités */}
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-emerald-50 rounded-xl px-2.5 py-1.5 text-center border border-emerald-100">
-                          <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">Début</div>
-                          <div className="text-xs font-bold text-emerald-900 mt-0.5">{formatDateShort(app.availability_start)}</div>
+                      {/* Dates de disponibilité proposée */}
+                      {(app.availability_start || app.availability_end) && (
+                        <div className="bg-slate-50/80 rounded-xl px-3 py-2 border border-slate-100 flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-1.5 text-slate-600">
+                            <Calendar className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+                            <span className="text-[11px] font-medium text-slate-500">Disponibilité :</span>
+                          </div>
+                          <div className="font-bold text-slate-800 text-[11px]">
+                            du {formatDateShort(app.availability_start)} au {formatDateShort(app.availability_end)}
+                          </div>
                         </div>
-                        <div className="bg-rose-50 rounded-xl px-2.5 py-1.5 text-center border border-rose-100">
-                          <div className="text-[10px] font-bold text-rose-700 uppercase tracking-wide">Fin</div>
-                          <div className="text-xs font-bold text-rose-900 mt-0.5">{formatDateShort(app.availability_end)}</div>
-                        </div>
-                      </div>
+                      )}
 
-                      {/* Motivation (extraite) */}
+                      {/* Motivation (message inspirant) */}
                       {app.motivation && (
-                        <p className="text-[11px] text-slate-600 leading-relaxed line-clamp-2 italic bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
-                          "{app.motivation}"
+                        <p className="text-xs text-slate-600 leading-relaxed italic bg-blue-50/40 rounded-xl p-3 border border-blue-100/60">
+                          « {app.motivation} »
                         </p>
                       )}
 
-                      {/* Date de candidature */}
+                      {/* Date d'engagement */}
                       <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                        <Hash className="w-3 h-3" />
-                        <span>Candidaté le {formatDate(app.created_at)}</span>
+                        <Clock className="w-3 h-3 text-slate-400" />
+                        <span>Mobilisé(e) le {formatDate(app.created_at)}</span>
                       </div>
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Message d'encouragement au pied de la liste */}
+              <div className="p-4 bg-slate-50/80 border-t border-slate-100 text-center space-y-2">
+                <p className="text-[11px] text-slate-600 font-medium">
+                  Envie de faire équipe avec eux pour accompagner ces élèves ?
+                </p>
+                <Link
+                  to={`/devenir-benevole?mission=${mission.id}`}
+                  className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm"
+                >
+                  <HeartHandshake className="w-3.5 h-3.5" />
+                  <span>Proposer mon aide à cette mission</span>
+                </Link>
               </div>
             </div>
 

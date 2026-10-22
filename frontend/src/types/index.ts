@@ -118,6 +118,7 @@ export interface PublicMission {
   practical_details?: string;
   benefits?: string;
   expected_commitment: string;
+  mentors_needed?: number;
   status: 'OPEN' | 'FILLED' | 'CLOSED';
   status_display: string;
   deadline?: string;

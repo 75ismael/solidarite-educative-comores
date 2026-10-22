@@ -89,6 +89,7 @@ class PublicMission(models.Model):
         related_name='public_missions'
     )
     deadline = models.DateField('Date limite de candidature', null=True, blank=True)
+    mentors_needed = models.PositiveIntegerField('Nombre de mentorats / bénévoles souhaités', default=3)
     start_date = models.DateField('Date de début de la mission', null=True, blank=True)
     end_date = models.DateField('Date de fin de la mission', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

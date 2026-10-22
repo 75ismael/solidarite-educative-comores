@@ -37,8 +37,9 @@ class PublicMissionSerializer(serializers.ModelSerializer):
             'activity_type', 'target_public', 'subject', 'subject_name', 'school_level',
             'island', 'city', 'intervention_zone_details', 'format', 'format_display',
             'prerequisites', 'description', 'presentation_full', 'steps_to_join',
-            'practical_details', 'benefits', 'expected_commitment', 'status', 'status_display',
-            'deadline', 'start_date', 'end_date', 'created_at', 'applications_count'
+            'practical_details', 'benefits', 'expected_commitment', 'mentors_needed',
+            'status', 'status_display', 'deadline', 'start_date', 'end_date',
+            'created_at', 'applications_count'
         ]
 
 class MissionApplicationSerializer(serializers.ModelSerializer):
