@@ -121,6 +121,8 @@ export interface PublicMission {
   status: 'OPEN' | 'FILLED' | 'CLOSED';
   status_display: string;
   deadline?: string;
+  start_date?: string;
+  end_date?: string;
   created_at: string;
   applications_count: number;
 }

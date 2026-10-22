@@ -17,14 +17,9 @@ import {
   ArrowRight,
   Sparkles,
   Info,
-  CheckCircle2,
   Calendar,
-  Award,
   Users,
-  ShieldCheck,
   GraduationCap,
-  ExternalLink,
-  ChevronUp,
 } from 'lucide-react';
 
 // Missions initiales de démonstration ultra-complètes au format JeVeuxAider / CMS
@@ -184,10 +179,6 @@ export const PublicMissionsPage: React.FC = () => {
   // Dropdowns d'ouverture
   const [openDropdown, setOpenDropdown] = useState<'DOMAINS' | 'ISLANDS' | 'ORGS' | null>(null);
 
-  // Modal / Panneau détaillé JeVeuxAider
-  const [inspectMission, setInspectMission] = useState<PublicMission | null>(null);
-  const [orgExpanded, setOrgExpanded] = useState(false);
-
   const filterContainerRef = useRef<HTMLDivElement>(null);
 
   // Fermeture des popovers au clic extérieur
@@ -200,31 +191,6 @@ export const PublicMissionsPage: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Fermer la modal avec la touche Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setInspectMission(null);
-        setOpenDropdown(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Bloquer le scroll d'arrière-plan quand la vue détaillée est ouverte
-  useEffect(() => {
-    if (inspectMission) {
-      document.body.style.overflow = 'hidden';
-      setOrgExpanded(false);
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [inspectMission]);
 
   // Chargement des données
   useEffect(() => {
@@ -882,13 +848,13 @@ export const PublicMissionsPage: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Titre cliquable qui ouvre les détails JeVeuxAider */}
-                    <h3
-                      onClick={() => setInspectMission(m)}
-                      className="font-bold text-slate-900 text-base leading-snug group-hover:text-brand-blue transition-colors cursor-pointer"
+                    {/* Titre cliquable qui navigue vers la page détail */}
+                    <Link
+                      to={`/missions/${m.id}`}
+                      className="font-bold text-slate-900 text-base leading-snug group-hover:text-brand-blue transition-colors hover:underline"
                     >
                       {m.title}
-                    </h3>
+                    </Link>
 
                     {/* Organisation & Auteur */}
                     <div className="text-[11px] text-slate-500 font-medium">
@@ -923,13 +889,12 @@ export const PublicMissionsPage: React.FC = () => {
 
                   {/* Actions de bas de carte */}
                   <div className="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setInspectMission(m)}
-                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-brand-blue hover:text-white hover:bg-brand-blue border border-brand-blue/30 transition-all cursor-pointer"
+                    <Link
+                      to={`/missions/${m.id}`}
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold text-brand-blue hover:text-white hover:bg-brand-blue border border-brand-blue/30 transition-all"
                     >
                       Détails de la mission
-                    </button>
+                    </Link>
 
                     <Link
                       to={`/devenir-benevole?mission=${m.id}`}
@@ -945,239 +910,6 @@ export const PublicMissionsPage: React.FC = () => {
           </div>
         )}
       </main>
-
-      {/* 5. MODAL / TIROIR GRAND FORMAT TYPE "JE VEUX AIDER" */}
-      {inspectMission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden my-6 flex flex-col max-h-[92vh]">
-            
-            {/* Header modal avec fermeture */}
-            <div className="px-6 sm:px-8 pt-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-4 bg-slate-50/60 shrink-0">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-900 uppercase tracking-wider">
-                    {inspectMission.subject_name}
-                  </span>
-                  <span className="text-xs text-slate-400 font-medium">• {inspectMission.school_level}</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
-                  {inspectMission.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                  Publié par <strong className="text-slate-800">{inspectMission.published_by || 'Coordination Pédagogique'}</strong> de l'organisation{' '}
-                  <span className="text-brand-teal font-bold">{inspectMission.organization_name || 'Solidarité Éducative Comores'}</span>
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setInspectMission(null)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer shrink-0"
-                aria-label="Fermer la vue détaillée"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Corps défilable de la mission (structure JeVeuxAider) */}
-            <div className="p-6 sm:p-8 space-y-7 overflow-y-auto flex-1">
-              
-              {/* LIGNE DE BADGES D'ÉTAT & ACTIVITÉS (Style JeVeuxAider) */}
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                <span className="px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 border border-teal-200 flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5" />
-                  <span>ACTIVITÉ : {inspectMission.activity_type || 'Soutien scolaire & Tutorat'}</span>
-                </span>
-
-                <span className="px-3 py-1.5 rounded-lg bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5" />
-                  <span>PUBLIC AIDÉ : {inspectMission.target_public || inspectMission.school_level}</span>
-                </span>
-
-                <span className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>MISSION OUVERTE</span>
-                </span>
-
-                <span
-                  className={`px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${
-                    inspectMission.format === 'REMOTE'
-                      ? 'bg-blue-50 text-brand-blue border-blue-200'
-                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                  }`}
-                >
-                  <Laptop className="w-3.5 h-3.5" />
-                  <span>
-                    {inspectMission.format === 'REMOTE'
-                      ? 'MISSION À DISTANCE'
-                      : inspectMission.format === 'IN_PERSON'
-                      ? 'MISSION SUR LE TERRAIN'
-                      : 'MISSION HYBRIDE / AU CHOIX'}
-                  </span>
-                </span>
-              </div>
-
-              {/* LOCALISATION & PRÉCISIONS ZONE D'INTERVENTION */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3">
-                <div className="flex items-start gap-2.5 text-sm text-slate-800 font-semibold">
-                  <MapPin className="w-4 h-4 text-brand-teal mt-0.5 shrink-0" />
-                  <div>
-                    <span>{inspectMission.city || 'Moroni'} ({inspectMission.island})</span>
-                  </div>
-                </div>
-
-                <div className="text-xs text-slate-600 pl-6 border-l-2 border-brand-teal/40 space-y-1">
-                  <div className="font-bold uppercase tracking-wider text-[11px] text-slate-500">
-                    Précisions sur la zone d’intervention :
-                  </div>
-                  <p className="leading-relaxed">
-                    {inspectMission.intervention_zone_details ||
-                      `${inspectMission.island} : Établissements publics partenaires, bibliothèques communales et tutorat numérique sécurisé.`}
-                  </p>
-                </div>
-              </div>
-
-              {/* PRÉ-REQUIS POUR RÉALISER CETTE MISSION */}
-              <div className="rounded-2xl border border-amber-200/90 bg-amber-50/50 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-amber-900 uppercase tracking-wider">
-                  <Award className="w-4 h-4 text-amber-700" />
-                  <span>Pré-requis pour réaliser cette mission</span>
-                </div>
-                <p className="text-xs sm:text-sm text-amber-950 leading-relaxed font-medium">
-                  {inspectMission.prerequisites ||
-                    'Mission ouverte aux étudiants, enseignants, professionnels bienveillants et membres de la diaspora. Aisance dans la matière et engagement dans la durée.'}
-                </p>
-              </div>
-
-              {/* PRÉSENTATION DE LA MISSION */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-brand-teal" />
-                  <span>Présentation de la mission</span>
-                </h3>
-
-                <div className="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-3 whitespace-pre-line bg-white">
-                  {inspectMission.presentation_full || inspectMission.description}
-                </div>
-
-                {inspectMission.benefits && (
-                  <div className="p-3.5 rounded-xl bg-purple-50 text-purple-900 text-xs font-medium border border-purple-200 flex items-start gap-2.5">
-                    <Sparkles className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <p className="leading-relaxed">{inspectMission.benefits}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* SAUTEZ LE PAS */}
-              <div className="space-y-2.5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Sautez le pas</span>
-                </h3>
-                <div className="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-1.5 whitespace-pre-line bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                  {inspectMission.steps_to_join ||
-                    `Rassurez-vous, notre superbe équipe organise une réunion d'information pour répondre à toutes vos questions avant tout engagement.
-Une rapide formation aux outils méthodologiques et à la charte éthique sera dispensée.
-Enfin, nous aidons nos bénévoles dans leur démarche de valorisation tout au long de l'année.`}
-                </div>
-              </div>
-
-              {/* PRÉCISIONS PRATIQUES */}
-              <div className="space-y-2.5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                  <Info className="w-4 h-4 text-blue-600" />
-                  <span>Précisions pratiques</span>
-                </h3>
-                <div className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                  {inspectMission.practical_details ||
-                    `Vous n'êtes pas seuls ! Notre équipe vous accueille dans l'établissement que vous avez choisi, suit votre accompagnement de manière bienveillante et partage des bonnes pratiques.
-Il n'y a pas d'accompagnement le week-end ni les jours fériés.`}
-                </div>
-              </div>
-
-              {/* DÉCOUVREZ L'ASSOCIATION */}
-              <div className="space-y-3 rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-blue text-white flex items-center justify-center font-extrabold text-sm shadow-sm">
-                      <Building2 className="w-5 h-5 text-teal-200" />
-                    </div>
-                    <div>
-                      <h4 className="font-extrabold text-slate-900 text-sm">
-                        Découvrez l'organisation {inspectMission.organization_name || 'Solidarité Éducative Comores'}
-                      </h4>
-                      <p className="text-[11px] text-slate-500">Partenaire agréé de soutien scolaire solidaire</p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setOrgExpanded(!orgExpanded)}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-brand-teal hover:underline cursor-pointer"
-                  >
-                    <span>{orgExpanded ? 'Replier' : 'Déplier'}</span>
-                    {orgExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
-
-                <div
-                  className={`text-xs text-slate-600 leading-relaxed whitespace-pre-line transition-all overflow-hidden ${
-                    orgExpanded ? 'max-h-96' : 'line-clamp-3'
-                  }`}
-                >
-                  {inspectMission.organization_description ||
-                    `Créée pour lutter contre les inégalités scolaires à travers des programmes d'accompagnement en ligne et en présentiel dans les établissements scolaires partenaires. L'association défend l'idée que nous ne pourrons pas résoudre les inégalités sociales sans résoudre les inégalités scolaires.
-
-Chaque année, de nombreux jeunes ont besoin d'un coup de pouce décisif : un bénévole accompagne dans la durée, 1h ou 2h par semaine, un ou plusieurs élèves jusqu'à l'amélioration de ses résultats. Le bénévole aide l'élève à faire ses devoirs, solidifier ses bases, reprendre confiance en lui et lui ouvre le champ des possibles.`}
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <Link
-                    to="/a-propos"
-                    className="inline-flex items-center gap-1 text-brand-teal font-bold hover:underline"
-                  >
-                    <span>En savoir plus sur notre association</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
-
-                  <div className="flex items-center gap-1.5 text-emerald-700 font-semibold text-[11px]">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Agrément & Charte Éthique</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Pied du modal avec CTA sticky */}
-            <div className="px-6 sm:px-8 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-              <div className="text-xs text-slate-500 hidden sm:block">
-                <div>Rythme : <strong className="text-slate-800">{inspectMission.expected_commitment}</strong></div>
-                <div className="text-[11px] text-slate-400">Date limite : {inspectMission.deadline || 'Recrutement continu'}</div>
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button
-                  type="button"
-                  onClick={() => setInspectMission(null)}
-                  className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  Fermer
-                </button>
-
-                <Link
-                  to={`/devenir-benevole?mission=${inspectMission.id}`}
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all"
-                >
-                  <span>Candidater à cette mission</span>
-                  <ArrowRight className="w-4 h-4 text-teal-300" />
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 };

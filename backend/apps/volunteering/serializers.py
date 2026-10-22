@@ -38,12 +38,14 @@ class PublicMissionSerializer(serializers.ModelSerializer):
             'island', 'city', 'intervention_zone_details', 'format', 'format_display',
             'prerequisites', 'description', 'presentation_full', 'steps_to_join',
             'practical_details', 'benefits', 'expected_commitment', 'status', 'status_display',
-            'deadline', 'created_at', 'applications_count'
+            'deadline', 'start_date', 'end_date', 'created_at', 'applications_count'
         ]
 
 class MissionApplicationSerializer(serializers.ModelSerializer):
     volunteer_name = serializers.CharField(source='volunteer.get_full_name', read_only=True)
     volunteer_email = serializers.EmailField(source='volunteer.email', read_only=True)
+    volunteer_first_name = serializers.CharField(source='volunteer.first_name', read_only=True)
+    volunteer_city = serializers.CharField(source='volunteer.city', read_only=True)
     mission_title = serializers.CharField(source='mission.title', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
 
@@ -51,6 +53,8 @@ class MissionApplicationSerializer(serializers.ModelSerializer):
         model = MissionApplication
         fields = [
             'id', 'mission', 'mission_title', 'volunteer', 'volunteer_name',
-            'volunteer_email', 'motivation', 'status', 'status_display', 'created_at'
+            'volunteer_first_name', 'volunteer_email', 'volunteer_city',
+            'motivation', 'availability_start', 'availability_end',
+            'status', 'status_display', 'created_at'
         ]
         read_only_fields = ['id', 'volunteer', 'status', 'created_at']

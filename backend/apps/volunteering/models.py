@@ -89,6 +89,8 @@ class PublicMission(models.Model):
         related_name='public_missions'
     )
     deadline = models.DateField('Date limite de candidature', null=True, blank=True)
+    start_date = models.DateField('Date de début de la mission', null=True, blank=True)
+    end_date = models.DateField('Date de fin de la mission', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -108,6 +110,8 @@ class MissionApplication(models.Model):
     mission = models.ForeignKey(PublicMission, on_delete=models.CASCADE, related_name='applications')
     volunteer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='applications')
     motivation = models.TextField('Message de motivation / Disponibilités')
+    availability_start = models.DateField('Disponible à partir du', null=True, blank=True)
+    availability_end = models.DateField('Disponible jusqu\'au', null=True, blank=True)
     status = models.CharField('Statut', max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
 

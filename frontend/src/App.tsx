@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/public/HomePage';
 import { PublicMissionsPage } from './pages/public/PublicMissionsPage';
+import { MissionDetailPage } from './pages/public/MissionDetailPage';
 import { ArticlesPage } from './pages/public/ArticlesPage';
 import { TransparencyPage } from './pages/public/TransparencyPage';
 import { ApplyVolunteerPage } from './pages/public/ApplyVolunteerPage';
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
             <Route path="programmes" element={<ProgramsPage />} />
             <Route path="charte-ethique" element={<SafeguardingCharterPage />} />
             <Route path="missions" element={<PublicMissionsPage />} />
+            <Route path="missions/:id" element={<MissionDetailPage />} />
             <Route path="actualites" element={<ArticlesPage />} />
             <Route path="transparence" element={<TransparencyPage />} />
             <Route path="rapport-impact" element={<ImpactReportPage />} />
