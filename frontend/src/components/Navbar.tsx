@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
   );
 
   return (
-    <>
+    <header className="sticky top-0 z-40 w-full shadow-sm transition-all">
       {/* ── 1. Bandeau supérieur : Mon compte + Publier une mission + Protection ── */}
       <aside aria-label="Bandeau officiel" className="bg-slate-900 text-slate-300 text-xs border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4">
@@ -195,8 +195,8 @@ export const Navbar: React.FC = () => {
         </div>
       </aside>
 
-      {/* ── 2. Header & Navigation principale ── */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-sm transition-all">
+      {/* ── 2. Navigation principale ── */}
+      <nav aria-label="Navigation principale" className="bg-white/95 backdrop-blur-md border-b border-slate-200/90">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3 lg:gap-6">
 
@@ -438,13 +438,13 @@ export const Navbar: React.FC = () => {
           <div className="lg:hidden">
             {/* Overlay */}
             <div
-              className="fixed inset-0 top-16 bg-slate-900/50 backdrop-blur-sm z-40"
+              className="fixed inset-0 top-[88px] sm:top-[92px] bg-slate-900/50 backdrop-blur-xs z-40"
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
             />
 
             {/* Tiroir coulissant */}
-            <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-2xl px-5 pt-3 pb-8 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto z-50">
+            <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-2xl px-5 pt-3 pb-8 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto z-50">
 
               {/* ── Mon compte + Publier (tout en haut du drawer) ── */}
               <div className="grid grid-cols-2 gap-2 pt-1">
@@ -668,7 +668,7 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
         )}
-      </header>
-    </>
+      </nav>
+    </header>
   );
 };

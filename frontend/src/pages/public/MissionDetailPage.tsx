@@ -616,7 +616,7 @@ export const MissionDetailPage: React.FC = () => {
           <div className="space-y-5">
 
             {/* Card CTA Candidature */}
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 sm:p-6 space-y-4 sticky top-20">
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-5 sm:p-6 space-y-4 sticky top-28">
               {/* Rythme & Dates clés */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-xs">

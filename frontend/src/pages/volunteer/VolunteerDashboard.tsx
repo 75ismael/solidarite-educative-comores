@@ -443,7 +443,7 @@ export const VolunteerDashboard: React.FC = () => {
       </div>
 
       {/* ── BARRE DE NAVIGATION PAR ONGLETS ── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-2xs">
+      <div className="sticky top-[86px] sm:top-[90px] z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2">
             {[
