@@ -47,12 +47,15 @@ class KeyMetricListView(generics.ListAPIView):
     serializer_class = KeyMetricSerializer
     permission_classes = [permissions.AllowAny]
 
-class TestimonialListView(generics.ListAPIView):
+class TestimonialListView(generics.ListCreateAPIView):
     serializer_class = TestimonialSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         qs = Testimonial.objects.filter(is_published=True)
+        role_type = self.request.query_params.get('role_type')
+        if role_type:
+            qs = qs.filter(role_type=role_type)
         mission_id = self.request.query_params.get('mission') or self.request.query_params.get('mission_id')
         if mission_id:
             mission_testimonials = qs.filter(mission_id=mission_id)
@@ -60,6 +63,9 @@ class TestimonialListView(generics.ListAPIView):
                 return mission_testimonials.order_by('order', '-created_at')
         # Si aucun témoignage spécifique ou pas de filtre, renvoyer les témoignages en avant et récents
         return qs.order_by('order', '-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(is_published=True)
 
 class FAQItemListView(generics.ListAPIView):
     queryset = FAQItem.objects.filter(is_published=True)
@@ -71,10 +77,60 @@ class ContactMessageCreateView(generics.CreateAPIView):
     serializer_class = ContactMessageSerializer
     permission_classes = [permissions.AllowAny]
 
-class PartnerListView(generics.ListAPIView):
-    queryset = Partner.objects.filter(is_active=True).order_by('order', 'name')
+class PartnerListView(generics.ListCreateAPIView):
     serializer_class = PartnerSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        user = self.request.user
+        status_filter = self.request.query_params.get('status')
+        include_pending = self.request.query_params.get('include_pending')
+
+        # Seuls les administrateurs et coordinateurs peuvent voir les entreprises en attente
+        is_admin_user = user.is_authenticated and (getattr(user, 'role', '') in ['ADMIN', 'COORDINATOR'] or user.is_staff)
+
+        if is_admin_user and status_filter == 'pending':
+            qs = Partner.objects.filter(is_active=False)
+        elif is_admin_user and include_pending in ['1', 'true', 'True']:
+            qs = Partner.objects.all()
+        else:
+            # Pour le public : uniquement les entreprises validées et affichées par l'administrateur
+            qs = Partner.objects.filter(is_active=True)
+
+        category = self.request.query_params.get('category')
+        if category:
+            qs = qs.filter(category=category)
+        return qs.order_by('order', 'name')
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        # Seul un administrateur connecté peut publier immédiatement une entreprise.
+        # Pour toute inscription d'entreprise depuis le site, elle est en attente (is_active=False)
+        # jusqu'à ce que l'administrateur la valide et l'affiche.
+        is_admin_user = user.is_authenticated and (getattr(user, 'role', '') in ['ADMIN', 'COORDINATOR'] or user.is_staff)
+        is_active = serializer.validated_data.get('is_active', True) if is_admin_user else False
+
+        serializer.save(is_active=is_active)
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    Autorise la lecture pour tous, mais réserve l'écriture (PATCH/PUT/DELETE)
+    aux administrateurs et coordinateurs.
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        user = request.user
+        return bool(user and user.is_authenticated and (getattr(user, 'role', '') in ['ADMIN', 'COORDINATOR'] or user.is_staff))
+
+class PartnerDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = PartnerSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_update(self, serializer):
+        # Permet à l'administrateur d'activer/désactiver ou modifier
+        serializer.save()
 
 class MilestoneListView(generics.ListAPIView):
     queryset = Milestone.objects.filter(is_active=True).order_by('order', 'year')

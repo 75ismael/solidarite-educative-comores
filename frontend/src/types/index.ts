@@ -320,10 +320,13 @@ export interface Partner {
   id: number;
   name: string;
   category: 'INSTITUTIONAL' | 'EDUCATION' | 'ASSOCIATION' | 'CORPORATE' | 'TECH';
-  category_display: string;
+  category_display?: string;
   logo_url?: string;
   website_url?: string;
   description?: string;
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
   order: number;
   is_active: boolean;
   created_at: string;

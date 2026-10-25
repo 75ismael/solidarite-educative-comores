@@ -24,6 +24,8 @@ import {
   School,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { BeneficiaryTestimonials } from '../../components/BeneficiaryTestimonials';
+import { SponsorLogos } from '../../components/SponsorLogos';
 
 /* ─── helpers ─── */
 const inputCls =
@@ -291,6 +293,15 @@ export const RequestSupportPage: React.FC = () => {
                 Inscrivez votre enfant pour bénéficier d'un soutien scolaire bénévole et gratuit aux Comores.
                 Notre équipe vous attribue un tuteur qualifié sous 48h.
               </p>
+              <div className="pt-2">
+                <a
+                  href="#temoignages"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-teal-200 hover:text-white text-xs font-semibold transition-all shadow-xs"
+                >
+                  <Users className="w-3.5 h-3.5 text-teal-300" />
+                  <span>Voir les témoignages des familles aidées ↓</span>
+                </a>
+              </div>
             </div>
           </div>
 
@@ -742,14 +753,17 @@ export const RequestSupportPage: React.FC = () => {
                   au cadre de protection des mineurs de l'association.
                 </p>
                 <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={form.parental_consent}
+                    onChange={(e) => set('parental_consent', e.target.checked)}
+                  />
                   <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                     form.parental_consent ? 'bg-brand-teal border-brand-teal' : 'border-slate-300 group-hover:border-brand-teal'
-                  }`}
-                    onClick={() => set('parental_consent', !form.parental_consent)}>
+                  }`}>
                     {form.parental_consent && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                   </div>
-                  <input type="checkbox" className="sr-only" checked={form.parental_consent}
-                    onChange={(e) => set('parental_consent', e.target.checked)} />
                   <span className="text-xs font-bold text-brand-blue leading-relaxed">
                     Je confirme être le représentant légal de l'élève et donne mon consentement éclairé pour son inscription et son suivi pédagogique. *
                   </span>
@@ -811,6 +825,16 @@ export const RequestSupportPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Section Témoignages des personnes & familles aidées ── */}
+      <section id="temoignages" className="max-w-4xl mx-auto px-4 sm:px-6 pb-8 pt-4 scroll-mt-8">
+        <BeneficiaryTestimonials />
+      </section>
+
+      {/* ── Section Entreprises & Partenaires (CMS) ── */}
+      <section id="entreprises-soutiens" className="max-w-4xl mx-auto px-4 sm:px-6 pb-20 pt-2 scroll-mt-8">
+        <SponsorLogos />
+      </section>
     </div>
   );
 };

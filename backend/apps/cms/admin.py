@@ -53,12 +53,37 @@ class ContactMessageAdmin(admin.ModelAdmin):
     search_fields = ('name', 'email', 'subject', 'message')
     list_editable = ('is_addressed',)
 
+from django.utils.html import format_html
+
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'order', 'is_active', 'created_at')
+    list_display = ('name', 'category', 'status_badge', 'contact_name', 'contact_email', 'order', 'is_active', 'created_at')
     list_editable = ('order', 'is_active')
-    list_filter = ('category', 'is_active')
-    search_fields = ('name', 'description', 'website_url')
+    list_filter = ('is_active', 'category', 'created_at')
+    search_fields = ('name', 'description', 'website_url', 'contact_name', 'contact_email')
+    actions = ['make_active', 'make_inactive']
+
+    @admin.display(description='Statut Affichage')
+    def status_badge(self, obj):
+        if obj.is_active:
+            return format_html(
+                '<span style="background-color: #d1fae5; color: #065f46; font-weight: bold; padding: 3px 8px; border-radius: 6px;">'
+                '✅ En ligne / Affiché</span>'
+            )
+        return format_html(
+            '<span style="background-color: #fef3c7; color: #92400e; font-weight: bold; padding: 3px 8px; border-radius: 6px;">'
+            '⏳ En attente validation admin</span>'
+        )
+
+    @admin.action(description="✅ Valider et afficher sur le site")
+    def make_active(self, request, queryset):
+        count = queryset.update(is_active=True)
+        self.message_user(request, f"{count} entreprise(s) validée(s) et affichée(s) sur le site avec succès.")
+
+    @admin.action(description="⏸️ Désactiver / Masquer du site")
+    def make_inactive(self, request, queryset):
+        count = queryset.update(is_active=False)
+        self.message_user(request, f"{count} entreprise(s) masquée(s) du site.")
 
 @admin.register(Milestone)
 class MilestoneAdmin(admin.ModelAdmin):

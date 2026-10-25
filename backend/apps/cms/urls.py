@@ -10,6 +10,7 @@ from .views import (
     ContactMessageCreateView,
     ImpactReportView,
     PartnerListView,
+    PartnerDetailView,
     MilestoneListView,
 )
 
@@ -24,5 +25,6 @@ urlpatterns = [
     path('contact/', ContactMessageCreateView.as_view(), name='contact_create'),
     path('impact-report/', ImpactReportView.as_view(), name='impact_report'),
     path('partners/', PartnerListView.as_view(), name='partner_list'),
+    path('partners/<int:pk>/', PartnerDetailView.as_view(), name='partner_detail'),
     path('milestones/', MilestoneListView.as_view(), name='milestone_list'),
 ]

@@ -144,12 +144,12 @@ class Partner(models.Model):
         CORPORATE = 'CORPORATE', 'Mécénat & Entreprise'
         TECH = 'TECH', 'Connectivité & Numérique'
 
-    name = models.CharField('Nom du partenaire', max_length=150)
+    name = models.CharField('Nom du partenaire / Entreprise', max_length=150)
     category = models.CharField(
         'Catégorie',
         max_length=30,
         choices=Category.choices,
-        default=Category.INSTITUTIONAL
+        default=Category.CORPORATE
     )
     logo_url = models.URLField('URL du logo ou visuel', blank=True)
     website_url = models.URLField('Lien officiel du site web', blank=True)
@@ -159,17 +159,25 @@ class Partner(models.Model):
         blank=True,
         help_text="Ex: Mise à disposition de locaux, dotation de matériel, connectivité 4G"
     )
+    contact_name = models.CharField('Nom du contact entreprise', max_length=120, blank=True)
+    contact_email = models.EmailField('Email du contact pour validation', blank=True)
+    contact_phone = models.CharField('Téléphone du contact', max_length=30, blank=True)
     order = models.PositiveIntegerField('Ordre d\'affichage', default=0)
-    is_active = models.BooleanField('Actif / Visible sur le site', default=True)
-    created_at = models.DateTimeField('Date de création', auto_now_add=True)
+    is_active = models.BooleanField(
+        'Validé & affiché sur le site par l\'admin',
+        default=False,
+        help_text="Cochez cette case pour afficher publiquement le logo après validation par l'administrateur."
+    )
+    created_at = models.DateTimeField('Date de création / inscription', auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Partenaire'
-        verbose_name_plural = 'Partenaires'
+        verbose_name = 'Partenaire / Entreprise'
+        verbose_name_plural = 'Partenaires & Entreprises mécènes'
         ordering = ['order', 'name']
 
     def __str__(self):
-        return f"{self.name} ({self.get_category_display()})"
+        status = "En ligne" if self.is_active else "En attente admin"
+        return f"{self.name} ({self.get_category_display()}) - [{status}]"
 
 class Milestone(models.Model):
     year = models.CharField('Année ou période (ex: 2024, 2026, 2027+)', max_length=50)

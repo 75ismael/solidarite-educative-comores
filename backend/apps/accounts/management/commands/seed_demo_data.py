@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from apps.cms.models import PageContent, Article, KeyMetric, Testimonial, FAQItem
+from apps.cms.models import PageContent, Article, KeyMetric, Testimonial, FAQItem, Partner
 from apps.pedagogy.models import Subject, Student, SupportRequest, LearningObjective
 from apps.volunteering.models import VolunteerProfile, PublicMission, MissionApplication
 from apps.matching.models import Pairing, PairingHistory, LiaisonNote
@@ -320,91 +320,100 @@ Il n'y a pas d'accompagnement les dimanches et jours fériés.""",
         )
 
         # 7. Binôme (Matching validé F06)
-        pairing1, _ = Pairing.objects.get_or_create(
+        pairing1 = Pairing.objects.filter(
             student=student1,
             volunteer=vol1,
             subject=subject_objs['Mathématiques'],
-            defaults={
-                'coordinator': coordinator,
-                'support_request': req1,
-                'status': Pairing.Status.ACTIVE,
-                'weekly_frequency': '1 séance de 1h30 chaque samedi',
-                'general_goals': 'Révision du programme de 3ème et méthodologie de résolution d\'exercices brevet.'
-            }
-        )
+        ).first()
+        if not pairing1:
+            pairing1 = Pairing.objects.create(
+                student=student1,
+                volunteer=vol1,
+                subject=subject_objs['Mathématiques'],
+                coordinator=coordinator,
+                support_request=req1,
+                status=Pairing.Status.ACTIVE,
+                weekly_frequency='1 séance de 1h30 chaque samedi',
+                general_goals='Révision du programme de 3ème et méthodologie de résolution d\'exercices brevet.'
+            )
 
         # 8. Objectifs pédagogiques F09
-        LearningObjective.objects.get_or_create(
-            student=student1,
-            subject=subject_objs['Mathématiques'],
-            description="Maîtriser le théorème de Pythagore et sa réciproque dans les configurations complexes.",
-            defaults={
-                'status': LearningObjective.Status.ACHIEVED,
-                'target_date': date.today() - timedelta(days=7),
-                'evaluation_notes': 'Objectif validé lors de la séance 2. L\'élève applique la méthode sans hésitation.'
-            }
-        )
+        if not LearningObjective.objects.filter(student=student1, subject=subject_objs['Mathématiques'], description__startswith="Maîtriser le théorème").exists():
+            LearningObjective.objects.create(
+                student=student1,
+                subject=subject_objs['Mathématiques'],
+                description="Maîtriser le théorème de Pythagore et sa réciproque dans les configurations complexes.",
+                status=LearningObjective.Status.ACHIEVED,
+                target_date=date.today() - timedelta(days=7),
+                evaluation_notes='Objectif validé lors de la séance 2. L\'élève applique la méthode sans hésitation.'
+            )
 
-        LearningObjective.objects.get_or_create(
-            student=student1,
-            subject=subject_objs['Mathématiques'],
-            description="Résoudre des équations du premier degré à une inconnue avec fractions.",
-            defaults={
-                'status': LearningObjective.Status.IN_PROGRESS,
-                'target_date': date.today() + timedelta(days=14),
-                'evaluation_notes': 'En bonne voie. Reste à automatiser les réductions au même dénominateur.'
-            }
-        )
+        if not LearningObjective.objects.filter(student=student1, subject=subject_objs['Mathématiques'], description__startswith="Résoudre des équations").exists():
+            LearningObjective.objects.create(
+                student=student1,
+                subject=subject_objs['Mathématiques'],
+                description="Résoudre des équations du premier degré à une inconnue avec fractions.",
+                status=LearningObjective.Status.IN_PROGRESS,
+                target_date=date.today() + timedelta(days=14),
+                evaluation_notes='En bonne voie. Reste à automatiser les réductions au même dénominateur.'
+            )
 
         # 9. Séances et Comptes Rendus (F07, F08)
-        past_session, _ = TutoringSession.objects.get_or_create(
+        past_session = TutoringSession.objects.filter(
             pairing=pairing1,
-            title="Séance 1 : Théorème de Pythagore & Calcul littéral",
-            defaults={
-                'scheduled_at': timezone.now() - timedelta(days=7),
-                'duration_minutes': 90,
-                'mode': TutoringSession.Mode.REMOTE,
-                'location_or_link': 'Appel WhatsApp / Partage photo exercices',
-                'status': TutoringSession.Status.COMPLETED
-            }
-        )
+            title="Séance 1 : Théorème de Pythagore & Calcul littéral"
+        ).first()
+        if not past_session:
+            past_session = TutoringSession.objects.create(
+                pairing=pairing1,
+                title="Séance 1 : Théorème de Pythagore & Calcul littéral",
+                scheduled_at=timezone.now() - timedelta(days=7),
+                duration_minutes=90,
+                mode=TutoringSession.Mode.REMOTE,
+                location_or_link='Appel WhatsApp / Partage photo exercices',
+                status=TutoringSession.Status.COMPLETED
+            )
 
-        SessionReport.objects.get_or_create(
-            session=past_session,
-            defaults={
-                'attendance': SessionReport.Attendance.PRESENT,
-                'duration_actual_minutes': 90,
-                'topics_covered': 'Rappels sur le triangle rectangle, calcul de l\'hypoténuse et rédaction rigoureuse.',
-                'exercises_done': 'Exercices 12 à 15 du manuel Comores 3ème.',
-                'understanding_level': SessionReport.UnderstandingLevel.GOOD,
-                'remaining_difficulties': 'Quelques confusions lors du passage sous la racine carrée, bien rectifiées.',
-                'next_steps': 'Passer aux équations simples la semaine prochaine.'
-            }
-        )
+        if not SessionReport.objects.filter(session=past_session).exists():
+            SessionReport.objects.create(
+                session=past_session,
+                attendance=SessionReport.Attendance.PRESENT,
+                duration_actual_minutes=90,
+                topics_covered='Rappels sur le triangle rectangle, calcul de l\'hypoténuse et rédaction rigoureuse.',
+                exercises_done='Exercices 12 à 15 du manuel Comores 3ème.',
+                understanding_level=SessionReport.UnderstandingLevel.GOOD,
+                remaining_difficulties='Quelques confusions lors du passage sous la racine carrée, bien rectifiées.',
+                next_steps='Passer aux équations simples la semaine prochaine.'
+            )
 
-        next_session, _ = TutoringSession.objects.get_or_create(
+        next_session = TutoringSession.objects.filter(
             pairing=pairing1,
-            title="Séance 2 : Équations et inéquations du premier degré",
-            defaults={
-                'scheduled_at': timezone.now() + timedelta(days=3),
-                'duration_minutes': 90,
-                'mode': TutoringSession.Mode.REMOTE,
-                'location_or_link': 'Appel WhatsApp',
-                'status': TutoringSession.Status.SCHEDULED
-            }
-        )
+            title="Séance 2 : Équations et inéquations du premier degré"
+        ).first()
+        if not next_session:
+            next_session = TutoringSession.objects.create(
+                pairing=pairing1,
+                title="Séance 2 : Équations et inéquations du premier degré",
+                scheduled_at=timezone.now() + timedelta(days=3),
+                duration_minutes=90,
+                mode=TutoringSession.Mode.REMOTE,
+                location_or_link='Appel WhatsApp',
+                status=TutoringSession.Status.SCHEDULED
+            )
 
         # 10. Carnet de liaison (F11)
-        LiaisonNote.objects.get_or_create(
-            pairing=pairing1,
-            author=vol1,
-            message="Bonjour Mme Ibrahim, votre fils a fait d'excellents progrès sur Pythagore aujourd'hui. Pour la prochaine séance de samedi, je lui ai demandé de relire les définitions de la page 42."
-        )
-        LiaisonNote.objects.get_or_create(
-            pairing=pairing1,
-            author=parent1,
-            message="Merci beaucoup Aminata, il a retrouvé confiance en lui et a refait ses exercices avec entrain hier soir !"
-        )
+        if not LiaisonNote.objects.filter(pairing=pairing1, author=vol1).exists():
+            LiaisonNote.objects.create(
+                pairing=pairing1,
+                author=vol1,
+                message="Bonjour Mme Ibrahim, votre fils a fait d'excellents progrès sur Pythagore aujourd'hui. Pour la prochaine séance de samedi, je lui ai demandé de relire les définitions de la page 42."
+            )
+        if not LiaisonNote.objects.filter(pairing=pairing1, author=parent1).exists():
+            LiaisonNote.objects.create(
+                pairing=pairing1,
+                author=parent1,
+                message="Merci beaucoup Aminata, il a retrouvé confiance en lui et a refait ses exercices avec entrain hier soir !"
+            )
 
         # 11. CMS Contenus (Pages, Articles, Indicateurs, FAQ, Témoignages)
         KeyMetric.objects.get_or_create(
@@ -614,5 +623,62 @@ Il n'y a pas d'accompagnement les dimanches et jours fériés.""",
                 'is_publicly_auditable': True
             }
         )
+
+        # 12. Entreprises & Partenaires mécènes (CMS)
+        partners_demo = [
+            {
+                'name': 'Telma Comores',
+                'category': Partner.Category.TECH,
+                'logo_url': 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=160&auto=format&fit=crop&q=80',
+                'website_url': 'https://telma.km',
+                'description': 'Forfaits internet 4G et connectivité mobile offerts pour les séances de soutien en visio.',
+                'order': 1
+            },
+            {
+                'name': 'Banque de Développement des Comores (BDC)',
+                'category': Partner.Category.CORPORATE,
+                'logo_url': 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=160&auto=format&fit=crop&q=80',
+                'website_url': 'https://bdc-comores.com',
+                'description': 'Mécénat pour l\'inclusion scolaire et bourses de manuels pour les élèves défavorisés.',
+                'order': 2
+            },
+            {
+                'name': 'TotalEnergies Comores',
+                'category': Partner.Category.CORPORATE,
+                'logo_url': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=160&auto=format&fit=crop&q=80',
+                'website_url': 'https://totalenergies.com',
+                'description': 'Soutien logistique et fourniture de lampes solaires d\'étude pour les zones rurales.',
+                'order': 3
+            },
+            {
+                'name': 'SNPSF Comores',
+                'category': Partner.Category.CORPORATE,
+                'logo_url': 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=160&auto=format&fit=crop&q=80',
+                'website_url': 'https://snpsf.km',
+                'description': 'Facilitation de l\'inclusion numérique et appui aux centres de ressources éducatives.',
+                'order': 4
+            },
+            {
+                'name': 'Al-Qamar Holding',
+                'category': Partner.Category.CORPORATE,
+                'logo_url': 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=160&auto=format&fit=crop&q=80',
+                'website_url': '',
+                'description': 'Mécénat d\'entreprise et dotation de kits de rentrée scolaire pour les fratries aidées.',
+                'order': 5
+            },
+            {
+                'name': 'UNICEF Comores',
+                'category': Partner.Category.INSTITUTIONAL,
+                'logo_url': 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=160&auto=format&fit=crop&q=80',
+                'website_url': 'https://unicef.org',
+                'description': 'Partenaire institutionnel pour le droit universel à une éducation de qualité aux Comores.',
+                'order': 6
+            },
+        ]
+        for p_data in partners_demo:
+            Partner.objects.update_or_create(
+                name=p_data['name'],
+                defaults=p_data
+            )
 
         self.stdout.write(self.style.SUCCESS("Données de démonstration créées avec succès !"))
