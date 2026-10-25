@@ -124,17 +124,46 @@ export const Navbar: React.FC = () => {
             </span>
           </div>
 
-          {/* Droite : actions rapides */}
+          {/* Droite : actions rapides réorganisées */}
           <div className="flex items-center gap-1 sm:gap-3">
 
-            {/* Mon compte / Connexion */}
+            {/* 1. Publier une mission */}
+            <Link
+              to="/publier-mission"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                isCurrent('/publier-mission')
+                  ? 'bg-teal-700 text-white'
+                  : 'text-teal-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <PlusCircle className="w-3 h-3 text-teal-400" />
+              <span className="hidden sm:inline">Publier une mission</span>
+              <span className="sm:hidden">Publier</span>
+            </Link>
+
+            <span className="text-slate-700">|</span>
+
+            {/* 2. Protection des mineurs */}
+            <Link
+              to="/signalement-protection"
+              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] text-rose-300 hover:text-rose-200 hover:bg-slate-800 font-semibold transition-colors"
+              title="Canal confidentiel de protection des mineurs"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <span className="hidden sm:inline">Protection des mineurs</span>
+              <span className="sm:hidden">Protection</span>
+            </Link>
+
+            <span className="text-slate-700">|</span>
+
+            {/* 3. Mon compte (tout à droite) */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-200 bg-slate-800/80 hover:bg-slate-800 hover:text-white border border-slate-700/60 transition-colors shadow-2xs"
                 >
-                  <LayoutDashboard className="w-3 h-3 text-slate-400" />
+                  <LayoutDashboard className="w-3 h-3 text-brand-teal" />
                   <span>
                     {user?.role === 'VOLUNTEER'
                       ? 'Portail Bénévole'
@@ -157,40 +186,12 @@ export const Navbar: React.FC = () => {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-200 bg-slate-800/80 hover:bg-slate-800 hover:text-white border border-slate-700/60 transition-colors shadow-2xs"
               >
-                <UserIcon className="w-3 h-3 text-slate-400" />
+                <UserIcon className="w-3 h-3 text-brand-teal" />
                 <span>Mon compte</span>
               </Link>
             )}
-
-            <span className="text-slate-700">|</span>
-
-            {/* Publier une mission */}
-            <Link
-              to="/publier-mission"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                isCurrent('/publier-mission')
-                  ? 'bg-teal-700 text-white'
-                  : 'text-teal-300 hover:text-white hover:bg-teal-800'
-              }`}
-            >
-              <PlusCircle className="w-3 h-3" />
-              <span className="hidden sm:inline">Publier une mission</span>
-              <span className="sm:hidden">Publier</span>
-            </Link>
-
-            <span className="text-slate-700">|</span>
-
-            {/* Protection mineurs */}
-            <Link
-              to="/signalement-protection"
-              className="inline-flex items-center gap-1.5 text-[11px] text-rose-300 hover:text-rose-200 font-semibold transition-colors"
-              title="Canal confidentiel de protection des mineurs"
-            >
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-              <span className="hidden sm:inline">Protection des mineurs</span>
-            </Link>
           </div>
         </div>
       </aside>
