@@ -94,49 +94,49 @@ export const LearningObjectivesModal: React.FC<Props> = ({
   const progressPercent = objectives.length > 0 ? Math.round((achievedCount / objectives.length) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-[#070512]/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[#140F2D] border border-[#281F4B] rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden text-slate-100">
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/70">
+        <div className="p-6 border-b border-[#281F4B] flex items-start justify-between bg-[#100A26]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-teal-100 text-teal-800">
+              <span className="p-2 rounded-xl bg-purple-950/60 border border-purple-500/30 text-purple-400">
                 <Target className="w-5 h-5" />
               </span>
               <div>
-                <span className="text-[11px] font-bold text-teal-800 uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-purple-300 uppercase tracking-wider block">
                   Livret Pédagogique (F09)
                 </span>
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="text-lg font-bold text-white">
                   Objectifs d'apprentissage : {studentName} ({studentCode})
                 </h3>
               </div>
             </div>
             {defaultSubjectName && (
-              <p className="text-xs text-slate-500 mt-1">
-                Discipline : <strong>{defaultSubjectName}</strong>
+              <p className="text-xs text-slate-400 mt-1">
+                Discipline : <strong className="text-purple-300">{defaultSubjectName}</strong>
               </p>
             )}
           </div>
 
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200/50 transition-colors"
+            className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Progress bar */}
-        <div className="px-6 py-4 bg-teal-50/50 border-b border-teal-100 flex items-center justify-between gap-4">
+        <div className="px-6 py-4 bg-[#100A26] border-b border-[#281F4B] flex items-center justify-between gap-4">
           <div className="flex-1 space-y-1.5">
-            <div className="flex justify-between text-xs font-semibold text-teal-950">
+            <div className="flex justify-between text-xs font-semibold text-slate-300">
               <span>Progression globale des compétences</span>
-              <span>{achievedCount} / {objectives.length} validés ({progressPercent}%)</span>
+              <span className="text-purple-300 font-bold">{achievedCount} / {objectives.length} validés ({progressPercent}%)</span>
             </div>
-            <div className="w-full bg-teal-200/50 h-2.5 rounded-full overflow-hidden">
+            <div className="w-full bg-[#0B0817] border border-[#281F4B] h-2.5 rounded-full overflow-hidden">
               <div
-                className="bg-brand-teal h-full rounded-full transition-all duration-500"
+                className="bg-purple-500 h-full rounded-full transition-all duration-500 shadow-sm"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -145,7 +145,7 @@ export const LearningObjectivesModal: React.FC<Props> = ({
           {canEdit && defaultSubjectId && (
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow-sm transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md shadow-purple-900/40 transition-colors whitespace-nowrap"
             >
               <PlusCircle className="w-4 h-4" />
               <span>{showAddForm ? 'Annuler' : 'Ajouter un objectif'}</span>
@@ -155,8 +155,8 @@ export const LearningObjectivesModal: React.FC<Props> = ({
 
         {/* Add Objective Inline Form */}
         {showAddForm && (
-          <form onSubmit={handleAddObjective} className="p-4 bg-slate-50 border-b border-slate-200 space-y-3">
-            <label className="block text-xs font-bold text-slate-700">
+          <form onSubmit={handleAddObjective} className="p-4 bg-[#0E0A20] border-b border-[#281F4B] space-y-3">
+            <label className="block text-xs font-bold text-slate-300">
               Définir un nouvel objectif opérationnel
             </label>
             <input
@@ -164,21 +164,21 @@ export const LearningObjectivesModal: React.FC<Props> = ({
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder="Ex: Maîtriser la factorisation par un facteur commun..."
-              className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+              className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-[#281F4B] bg-[#140F2D] text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
               required
             />
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-white"
+                className="px-3 py-1.5 rounded-lg border border-[#281F4B] text-xs font-semibold text-slate-300 hover:bg-white/5 transition-colors"
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 disabled={saving || !newDesc.trim()}
-                className="px-4 py-1.5 rounded-lg bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 disabled:opacity-50"
+                className="px-4 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold disabled:opacity-50 transition-colors"
               >
                 {saving ? 'Enregistrement...' : 'Enregistrer'}
               </button>
@@ -187,14 +187,14 @@ export const LearningObjectivesModal: React.FC<Props> = ({
         )}
 
         {/* Objectives List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-slate-50/30">
+        <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#0B0817]">
           {loading ? (
             <div className="text-center py-12 text-xs text-slate-400">
               Chargement des objectifs pédagogiques...
             </div>
           ) : objectives.length === 0 ? (
             <div className="text-center py-12 space-y-2">
-              <p className="text-sm font-semibold text-slate-600">
+              <p className="text-sm font-semibold text-slate-300">
                 Aucun objectif formalisé pour le moment.
               </p>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -207,19 +207,19 @@ export const LearningObjectivesModal: React.FC<Props> = ({
                 key={obj.id}
                 className={`p-4 rounded-2xl border transition-all ${
                   obj.status === 'ACHIEVED'
-                    ? 'bg-emerald-50/40 border-emerald-200'
-                    : 'bg-white border-slate-200 shadow-sm'
+                    ? 'bg-emerald-950/20 border-emerald-500/30'
+                    : 'bg-[#140F2D] border-[#281F4B] shadow-sm'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-1">
                     <p className={`text-xs sm:text-sm font-medium ${
-                      obj.status === 'ACHIEVED' ? 'text-emerald-950 font-bold' : 'text-slate-800'
+                      obj.status === 'ACHIEVED' ? 'text-emerald-300 font-bold' : 'text-slate-200'
                     }`}>
                       {obj.description}
                     </p>
                     {obj.evaluation_notes && (
-                      <p className="text-xs text-slate-500 italic bg-white/70 p-2 rounded-lg border border-slate-100">
+                      <p className="text-xs text-slate-400 italic bg-[#0E0A20] p-2 rounded-lg border border-[#281F4B]">
                         Remarque tuteur : {obj.evaluation_notes}
                       </p>
                     )}
@@ -237,10 +237,10 @@ export const LearningObjectivesModal: React.FC<Props> = ({
                         }
                         className={`text-xs font-bold px-3 py-1.5 rounded-xl border focus:outline-none cursor-pointer ${
                           obj.status === 'ACHIEVED'
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                             : obj.status === 'IN_PROGRESS'
-                            ? 'bg-amber-100 text-amber-800 border-amber-300'
-                            : 'bg-slate-100 text-slate-700 border-slate-300'
+                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                            : 'bg-[#0E0A20] text-slate-300 border-[#281F4B]'
                         }`}
                       >
                         <option value="NOT_STARTED">Non commencé</option>
@@ -251,10 +251,10 @@ export const LearningObjectivesModal: React.FC<Props> = ({
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold ${
                           obj.status === 'ACHIEVED'
-                            ? 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                             : obj.status === 'IN_PROGRESS'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-slate-100 text-slate-700'
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                            : 'bg-[#0E0A20] text-slate-300 border border-[#281F4B]'
                         }`}
                       >
                         {obj.status === 'ACHIEVED'
@@ -272,10 +272,10 @@ export const LearningObjectivesModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-white border-t border-slate-100 flex justify-end">
+        <div className="p-4 bg-[#100A26] border-t border-[#281F4B] flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+            className="px-5 py-2 rounded-xl bg-[#0E0A20] hover:bg-[#1A133A] border border-[#281F4B] text-slate-300 text-xs font-bold transition-colors"
           >
             Fermer
           </button>

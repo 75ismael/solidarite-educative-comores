@@ -33,14 +33,14 @@ class DashboardErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundary
   render() {
     if (this.state.hasError) {
       return (
-        <div className="max-w-xl mx-auto my-16 p-8 bg-white border border-rose-200 rounded-3xl shadow-sm text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+        <div className="max-w-xl mx-auto my-16 p-8 bg-[#140F2D] border border-rose-500/30 rounded-3xl shadow-xl text-center space-y-4 text-slate-100">
+          <div className="w-12 h-12 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-white">
             Une interruption est survenue lors du chargement de votre espace
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             {this.state.error?.message || "Une erreur inattendue s'est produite lors de la synchronisation des données."}
           </p>
           <button
@@ -48,7 +48,7 @@ class DashboardErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundary
               this.setState({ hasError: false });
               window.location.reload();
             }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white text-xs font-bold hover:bg-purple-500 shadow-md shadow-purple-900/40 transition-colors"
           >
             <RefreshCw className="w-4 h-4" />
             Actualiser mon espace
