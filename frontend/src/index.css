@@ -3,7 +3,75 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-[#F3F6F8] text-slate-800 font-sans antialiased;
+  :root {
+    color-scheme: dark;
   }
+
+  body {
+    @apply bg-[#0B0817] text-slate-100 font-sans antialiased selection:bg-purple-600 selection:text-white;
+    background-color: #0B0817;
+    color: #F1F0F7;
+  }
+}
+
+/* ── Barres de défilement sombres élégantes avec reflet violet ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0817;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #281F4B;
+  border-radius: 9999px;
+  border: 2px solid #0B0817;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7C3AED;
+}
+
+/* ── Styles signatures Scaleway (cartes vitreuses, boutons néon) ── */
+.scaleway-card {
+  background-color: rgba(20, 15, 40, 0.75);
+  border: 1px solid rgba(43, 35, 83, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.scaleway-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scaleway-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 12px 30px -10px rgba(124, 58, 237, 0.25);
+}
+
+.scaleway-btn-primary {
+  background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+}
+.scaleway-btn-primary:hover {
+  background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 100%);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.5);
+  transform: scale(1.02);
+}
+
+.scaleway-btn-outline {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+.scaleway-btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
 }

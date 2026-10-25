@@ -105,16 +105,16 @@ export const Navbar: React.FC = () => {
   );
 
   return (
-    <header className="sticky top-0 z-40 w-full shadow-sm transition-all">
+    <header className="sticky top-0 z-40 w-full shadow-2xl border-b border-[#281F4B] transition-all">
       {/* ── 1. Bandeau supérieur : Mon compte + Publier une mission + Protection ── */}
-      <aside aria-label="Bandeau officiel" className="bg-slate-900 text-slate-300 text-xs border-b border-slate-800">
+      <aside aria-label="Bandeau officiel" className="bg-[#070512] text-slate-400 text-xs border-b border-[#1E173E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4">
 
           {/* Gauche : statut plateforme */}
           <div className="flex items-center gap-2 text-[11px] sm:text-xs">
             <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
             </span>
             <span className="font-medium text-slate-400 hidden md:inline">
               Plateforme associative &bull; Soutien scolaire gratuit Comores &ndash; France
@@ -130,13 +130,13 @@ export const Navbar: React.FC = () => {
             {/* 1. Publier une mission */}
             <Link
               to="/publier-mission"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold transition-all ${
                 isCurrent('/publier-mission')
-                  ? 'bg-teal-700 text-white'
-                  : 'text-teal-300 hover:text-white hover:bg-slate-800'
+                  ? 'bg-purple-600 text-white shadow-xs'
+                  : 'text-purple-300 hover:text-white bg-purple-950/40 hover:bg-purple-900/60 border border-purple-800/40'
               }`}
             >
-              <PlusCircle className="w-3 h-3 text-teal-400" />
+              <PlusCircle className="w-3 h-3 text-purple-400" />
               <span className="hidden sm:inline">Publier une mission</span>
               <span className="sm:hidden">Publier</span>
             </Link>
@@ -146,7 +146,7 @@ export const Navbar: React.FC = () => {
             {/* 2. Protection des mineurs */}
             <Link
               to="/signalement-protection"
-              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] text-rose-300 hover:text-rose-200 hover:bg-slate-800 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] text-rose-300 hover:text-rose-200 hover:bg-white/5 font-semibold transition-colors"
               title="Canal confidentiel de protection des mineurs"
             >
               <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
@@ -161,9 +161,9 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-200 bg-slate-800/80 hover:bg-slate-800 hover:text-white border border-slate-700/60 transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all shadow-xs"
                 >
-                  <LayoutDashboard className="w-3 h-3 text-brand-teal" />
+                  <LayoutDashboard className="w-3 h-3 text-purple-400" />
                   <span>
                     {user?.role === 'VOLUNTEER'
                       ? 'Portail Bénévole'
@@ -176,7 +176,7 @@ export const Navbar: React.FC = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-rose-300 hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold text-slate-400 hover:text-rose-300 hover:bg-white/5 transition-colors cursor-pointer"
                   title="Se déconnecter"
                 >
                   <LogOut className="w-3 h-3" />
@@ -186,9 +186,9 @@ export const Navbar: React.FC = () => {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-200 bg-slate-800/80 hover:bg-slate-800 hover:text-white border border-slate-700/60 transition-colors shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all shadow-xs"
               >
-                <UserIcon className="w-3 h-3 text-brand-teal" />
+                <UserIcon className="w-3 h-3 text-purple-400" />
                 <span>Mon compte</span>
               </Link>
             )}
@@ -197,38 +197,38 @@ export const Navbar: React.FC = () => {
       </aside>
 
       {/* ── 2. Navigation principale ── */}
-      <nav aria-label="Navigation principale" className="bg-white/95 backdrop-blur-md border-b border-slate-200/90">
+      <nav aria-label="Navigation principale" className="bg-[#0B0817]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3 lg:gap-6">
 
             {/* Logo & Identité */}
             <Link
               to="/"
-              className="flex items-center gap-3 shrink-0 group py-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
+              className="flex items-center gap-3 shrink-0 group py-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-blue to-teal-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
-                <BookOpen className="w-5 h-5 text-teal-200" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-900 flex items-center justify-center text-white shadow-md shadow-purple-950/60 group-hover:scale-105 transition-transform duration-200">
+                <BookOpen className="w-5 h-5 text-purple-200" />
               </div>
               <div className="flex flex-col">
-                <span className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight leading-tight group-hover:text-brand-blue transition-colors">
+                <span className="font-extrabold text-base sm:text-lg text-white tracking-tight leading-tight group-hover:text-purple-300 transition-colors">
                   Solidarité Éducative
                 </span>
-                <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-brand-teal uppercase">
+                <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-purple-400 uppercase">
                   <span>Comores</span>
-                  <span className="w-1 h-1 rounded-full bg-brand-teal/60"></span>
+                  <span className="w-1 h-1 rounded-full bg-purple-400/60"></span>
                   <span>France</span>
                 </div>
               </div>
             </Link>
 
             {/* Navigation Desktop */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-slate-600">
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-medium text-slate-300">
               <Link
                 to="/"
-                className={`px-3 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-1.5 rounded-full transition-colors ${
                   isCurrent('/')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
+                    ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                    : 'hover:text-white hover:bg-white/5'
                 }`}
               >
                 Accueil
@@ -246,16 +246,16 @@ export const Navbar: React.FC = () => {
                   onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
                   aria-expanded={aboutDropdownOpen}
                   aria-haspopup="true"
-                  className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
                     isAboutActive || aboutDropdownOpen
-                      ? 'text-brand-teal font-bold bg-teal-50/80'
-                      : 'hover:text-brand-blue hover:bg-slate-50'
+                      ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                      : 'hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <span>L'Association</span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 text-slate-500 ${
-                      aboutDropdownOpen ? 'rotate-180 text-brand-teal' : ''
+                    className={`w-4 h-4 transition-transform duration-200 text-slate-400 ${
+                      aboutDropdownOpen ? 'rotate-180 text-purple-400' : ''
                     }`}
                   />
                 </button>
@@ -263,22 +263,22 @@ export const Navbar: React.FC = () => {
                 {aboutDropdownOpen && (
                   <div
                     role="menu"
-                    className="absolute left-0 mt-1.5 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 z-50 transition-all duration-150"
+                    className="absolute left-0 mt-1.5 w-72 bg-[#140F2D] rounded-2xl shadow-2xl border border-[#2B2353] p-2 z-50 transition-all duration-150 backdrop-blur-md"
                   >
                     <Link
                       to="/a-propos"
                       onClick={() => setAboutDropdownOpen(false)}
                       role="menuitem"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-teal-50 text-brand-teal flex items-center justify-center shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-purple-950/70 text-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                         <Info className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-brand-teal transition-colors">
+                        <div className="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">
                           À Propos &amp; Histoire
                         </div>
-                        <div className="text-[11px] text-slate-500 leading-snug">
+                        <div className="text-[11px] text-slate-400 leading-snug">
                           Notre mission, genèse associative et équipe
                         </div>
                       </div>
@@ -288,16 +288,16 @@ export const Navbar: React.FC = () => {
                       to="/programmes"
                       onClick={() => setAboutDropdownOpen(false)}
                       role="menuitem"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-700 flex items-center justify-center shrink-0 group-hover:bg-cyan-700 group-hover:text-white transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-950/70 text-indigo-400 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                         <GraduationCap className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">
+                        <div className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors">
                           Programmes Scolaires
                         </div>
-                        <div className="text-[11px] text-slate-500 leading-snug">
+                        <div className="text-[11px] text-slate-400 leading-snug">
                           Accompagnement Primaire, Collège et Lycée
                         </div>
                       </div>
@@ -307,37 +307,37 @@ export const Navbar: React.FC = () => {
                       to="/rapport-impact"
                       onClick={() => setAboutDropdownOpen(false)}
                       role="menuitem"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-700 group-hover:text-white transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-950/70 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                         <Award className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                        <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">
                           Rapport d'Impact
                         </div>
-                        <div className="text-[11px] text-slate-500 leading-snug">
+                        <div className="text-[11px] text-slate-400 leading-snug">
                           Bilan officiel consolidé et indicateurs clés
                         </div>
                       </div>
                     </Link>
 
-                    <div className="my-1 border-t border-slate-100"></div>
+                    <div className="my-1 border-t border-[#2B2353]"></div>
 
                     <Link
                       to="/charte-ethique"
                       onClick={() => setAboutDropdownOpen(false)}
                       role="menuitem"
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-rose-50/50 transition-colors group"
+                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-rose-950/30 transition-colors group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0 group-hover:bg-rose-700 group-hover:text-white transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-rose-950/70 text-rose-400 flex items-center justify-center shrink-0 group-hover:bg-rose-600 group-hover:text-white transition-colors">
                         <ShieldCheck className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-rose-700 transition-colors">
+                        <div className="text-xs font-bold text-white group-hover:text-rose-300 transition-colors">
                           Charte Éthique &amp; Mineurs
                         </div>
-                        <div className="text-[11px] text-slate-500 leading-snug">
+                        <div className="text-[11px] text-slate-400 leading-snug">
                           Cadre déontologique et sauvegarde des élèves
                         </div>
                       </div>
@@ -348,10 +348,10 @@ export const Navbar: React.FC = () => {
 
               <Link
                 to="/missions"
-                className={`px-3 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-1.5 rounded-full transition-colors ${
                   isCurrent('/missions')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
+                    ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                    : 'hover:text-white hover:bg-white/5'
                 }`}
               >
                 Missions
@@ -359,10 +359,10 @@ export const Navbar: React.FC = () => {
 
               <Link
                 to="/actualites"
-                className={`px-3 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-1.5 rounded-full transition-colors ${
                   isCurrent('/actualites')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
+                    ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                    : 'hover:text-white hover:bg-white/5'
                 }`}
               >
                 Actualités
@@ -370,10 +370,10 @@ export const Navbar: React.FC = () => {
 
               <Link
                 to="/transparence"
-                className={`px-3 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-1.5 rounded-full transition-colors ${
                   isCurrent('/transparence')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
+                    ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                    : 'hover:text-white hover:bg-white/5'
                 }`}
               >
                 Transparence
@@ -381,21 +381,21 @@ export const Navbar: React.FC = () => {
 
               <Link
                 to="/contact"
-                className={`px-3 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-1.5 rounded-full transition-colors ${
                   isCurrent('/contact')
-                    ? 'text-brand-teal font-bold bg-teal-50/80'
-                    : 'hover:text-brand-blue hover:bg-slate-50'
+                    ? 'text-white font-bold bg-purple-600/20 border border-purple-500/30'
+                    : 'hover:text-white hover:bg-white/5'
                 }`}
               >
                 Contact
               </Link>
             </nav>
 
-            {/* Actions Desktop (Droite) */}
+            {/* Actions Desktop (Droite) - Style Scaleway (Pillules & Outlines) */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
               <Link
                 to="/transparence#faire-un-don"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs transition-all shadow-xs"
                 title="Soutenir l'action bénévole aux Comores"
               >
                 <Heart className="w-3.5 h-3.5 fill-white text-white" />
@@ -404,10 +404,10 @@ export const Navbar: React.FC = () => {
 
               <Link
                 to="/demande-soutien"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-sm hover:shadow transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] transition-all"
               >
                 <span>Demander de l'aide</span>
-                <ArrowRight className="w-3.5 h-3.5 text-teal-300" />
+                <ArrowRight className="w-3.5 h-3.5 text-purple-200" />
               </Link>
             </div>
 
@@ -415,7 +415,7 @@ export const Navbar: React.FC = () => {
             <div className="flex lg:hidden items-center gap-2 shrink-0">
               <Link
                 to="/transparence#faire-un-don"
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-white/20 bg-white/5 text-white text-xs font-bold shadow-xs"
               >
                 <Heart className="w-3 h-3 fill-white" />
                 <span>Don</span>
@@ -423,7 +423,7 @@ export const Navbar: React.FC = () => {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 border border-white/15 transition-colors cursor-pointer"
                 aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-expanded={mobileMenuOpen}
               >
@@ -439,23 +439,36 @@ export const Navbar: React.FC = () => {
           <div className="lg:hidden">
             {/* Overlay */}
             <div
-              className="fixed inset-0 top-[88px] sm:top-[92px] bg-slate-900/50 backdrop-blur-xs z-40"
+              className="fixed inset-0 top-[88px] sm:top-[92px] bg-black/60 backdrop-blur-xs z-40"
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
             />
 
             {/* Tiroir coulissant */}
-            <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-2xl px-5 pt-3 pb-8 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto z-50">
+            <div className="absolute top-full left-0 right-0 bg-[#0E0A20] border-b border-[#281F4B] shadow-2xl px-5 pt-3 pb-8 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto z-50 text-slate-200">
 
               {/* ── Mon compte + Publier (tout en haut du drawer) ── */}
               <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  to="/publier-mission"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full font-bold text-xs shadow-sm transition-colors ${
+                    isCurrent('/publier-mission')
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-purple-950/50 border border-purple-800/50 text-purple-300 hover:bg-purple-900'
+                  }`}
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Publier mission</span>
+                </Link>
+
                 {isAuthenticated ? (
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-brand-blue text-white font-bold text-xs shadow-sm"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-white/10 border border-white/15 text-white font-bold text-xs shadow-sm"
                   >
-                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <LayoutDashboard className="w-3.5 h-3.5 text-purple-400" />
                     <span>
                       {user?.role === 'VOLUNTEER'
                         ? 'Portail Bénévole'
@@ -470,25 +483,12 @@ export const Navbar: React.FC = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full border border-white/15 text-slate-200 font-bold text-xs hover:bg-white/5 transition-colors"
                   >
-                    <UserIcon className="w-3.5 h-3.5 text-slate-400" />
+                    <UserIcon className="w-3.5 h-3.5 text-purple-400" />
                     <span>Mon compte</span>
                   </Link>
                 )}
-
-                <Link
-                  to="/publier-mission"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-bold text-xs shadow-sm transition-colors ${
-                    isCurrent('/publier-mission')
-                      ? 'bg-brand-teal text-white'
-                      : 'bg-teal-50 border border-teal-200 text-brand-teal hover:bg-teal-100'
-                  }`}
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  <span>Publier mission</span>
-                </Link>
               </div>
 
               {/* Navigation principale */}
@@ -501,18 +501,18 @@ export const Navbar: React.FC = () => {
                   to="/"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    isCurrent('/') ? 'bg-purple-600/20 text-white font-bold border border-purple-500/30' : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
                   Accueil
                 </Link>
 
                 {/* Accordéon "L'Association" */}
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-2 space-y-1">
+                <div className="rounded-xl border border-[#281F4B] bg-[#140F2D] p-2 space-y-1">
                   <button
                     type="button"
                     onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
-                    className="w-full flex items-center justify-between px-2 py-1 text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
+                    className="w-full flex items-center justify-between px-2 py-1 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
                   >
                     <span className="uppercase tracking-wider">L'Association</span>
                     <ChevronDown
@@ -528,40 +528,40 @@ export const Navbar: React.FC = () => {
                         to="/a-propos"
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                          isCurrent('/a-propos') ? 'text-brand-teal font-bold bg-white shadow-sm' : 'text-slate-600 hover:bg-white'
+                          isCurrent('/a-propos') ? 'text-white font-bold bg-purple-600/30 shadow-sm' : 'text-slate-300 hover:bg-white/5'
                         }`}
                       >
-                        <Info className="w-4 h-4 text-brand-teal" />
+                        <Info className="w-4 h-4 text-purple-400" />
                         <span>À Propos &amp; Histoire</span>
                       </Link>
                       <Link
                         to="/programmes"
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                          isCurrent('/programmes') ? 'text-brand-teal font-bold bg-white shadow-sm' : 'text-slate-600 hover:bg-white'
+                          isCurrent('/programmes') ? 'text-white font-bold bg-purple-600/30 shadow-sm' : 'text-slate-300 hover:bg-white/5'
                         }`}
                       >
-                        <GraduationCap className="w-4 h-4 text-cyan-600" />
+                        <GraduationCap className="w-4 h-4 text-indigo-400" />
                         <span>Programmes Scolaires</span>
                       </Link>
                       <Link
                         to="/rapport-impact"
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                          isCurrent('/rapport-impact') ? 'text-brand-teal font-bold bg-white shadow-sm' : 'text-slate-600 hover:bg-white'
+                          isCurrent('/rapport-impact') ? 'text-white font-bold bg-purple-600/30 shadow-sm' : 'text-slate-300 hover:bg-white/5'
                         }`}
                       >
-                        <Award className="w-4 h-4 text-emerald-600" />
+                        <Award className="w-4 h-4 text-emerald-400" />
                         <span>Rapport d'Impact</span>
                       </Link>
                       <Link
                         to="/charte-ethique"
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                          isCurrent('/charte-ethique') ? 'text-brand-teal font-bold bg-white shadow-sm' : 'text-slate-600 hover:bg-white'
+                          isCurrent('/charte-ethique') ? 'text-white font-bold bg-purple-600/30 shadow-sm' : 'text-slate-300 hover:bg-white/5'
                         }`}
                       >
-                        <ShieldCheck className="w-4 h-4 text-rose-600" />
+                        <ShieldCheck className="w-4 h-4 text-rose-400" />
                         <span>Charte Éthique &amp; Mineurs</span>
                       </Link>
                     </div>
@@ -572,10 +572,10 @@ export const Navbar: React.FC = () => {
                   to="/missions"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/missions') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    isCurrent('/missions') ? 'bg-purple-600/20 text-white font-bold border border-purple-500/30' : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
-                  <HeartHandshake className="w-4 h-4 text-brand-teal" />
+                  <HeartHandshake className="w-4 h-4 text-purple-400" />
                   <span>Missions de bénévolat</span>
                 </Link>
 
@@ -583,7 +583,7 @@ export const Navbar: React.FC = () => {
                   to="/actualites"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/actualites') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    isCurrent('/actualites') ? 'bg-purple-600/20 text-white font-bold border border-purple-500/30' : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
                   <FileText className="w-4 h-4 text-slate-400" />
@@ -594,10 +594,10 @@ export const Navbar: React.FC = () => {
                   to="/transparence"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/transparence') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    isCurrent('/transparence') ? 'bg-purple-600/20 text-white font-bold border border-purple-500/30' : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
-                  <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  <TrendingUp className="w-4 h-4 text-emerald-400" />
                   <span>Transparence &amp; Dons</span>
                 </Link>
 
@@ -605,7 +605,7 @@ export const Navbar: React.FC = () => {
                   to="/contact"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isCurrent('/contact') ? 'bg-teal-50 text-brand-teal font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    isCurrent('/contact') ? 'bg-purple-600/20 text-white font-bold border border-purple-500/30' : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
                   <PhoneCall className="w-4 h-4 text-slate-400" />
@@ -617,20 +617,20 @@ export const Navbar: React.FC = () => {
                   <Link
                     to="/signalement-protection"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200"
+                    className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-300 bg-rose-950/40 border border-rose-800/40"
                   >
-                    <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+                    <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
                     <span>Protection des mineurs (Signalement)</span>
                   </Link>
                 </div>
               </div>
 
               {/* Section CTAs + Déconnexion */}
-              <div className="pt-4 border-t border-slate-100 space-y-2.5">
+              <div className="pt-4 border-t border-[#281F4B] space-y-2.5">
                 <Link
                   to="/transparence#faire-un-don"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm transition-colors"
                 >
                   <Heart className="w-4 h-4 fill-white" />
                   <span>Faire un don solidaire</span>
@@ -639,16 +639,16 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/demande-soutien"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-blue text-white font-bold text-sm shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-purple-900/40"
                 >
                   <span>Demander de l'aide</span>
-                  <ArrowRight className="w-4 h-4 text-teal-300" />
+                  <ArrowRight className="w-4 h-4 text-purple-200" />
                 </Link>
 
                 <Link
                   to="/devenir-benevole"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-teal-50 border border-teal-200 text-brand-teal font-bold text-xs"
+                  className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-full bg-purple-950/40 border border-purple-800/50 text-purple-300 font-bold text-xs"
                 >
                   <HeartHandshake className="w-3.5 h-3.5" />
                   <span>Devenir bénévole</span>
@@ -660,7 +660,7 @@ export const Navbar: React.FC = () => {
                       setMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="w-full text-center py-2 text-rose-600 text-xs font-semibold hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
+                    className="w-full text-center py-2 text-rose-400 text-xs font-semibold hover:bg-rose-950/30 rounded-lg cursor-pointer transition-colors"
                   >
                     Se déconnecter
                   </button>

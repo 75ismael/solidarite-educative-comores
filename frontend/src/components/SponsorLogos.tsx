@@ -293,14 +293,14 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
       {/* ── En-tête de la section ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/90 text-slate-700 text-xs font-bold">
-            <Building2 className="w-3.5 h-3.5 text-brand-teal" />
-            <span>Mécénat & Entreprises partenaires (CMS)</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 text-xs font-bold">
+            <Building2 className="w-3.5 h-3.5 text-purple-400" />
+            <span>Mécénat &amp; Entreprises partenaires</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-brand-blue tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
             {title}
           </h2>
-          <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+          <p className="text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
             {subtitle}
           </p>
         </div>
@@ -314,10 +314,10 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
               setFormSuccessMessage('');
               setIsModalOpen(true);
             }}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold shadow-2xs transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-purple-950/40 transition-all active:scale-95 cursor-pointer"
             title="Inscrire votre entreprise ou proposer un mécénat"
           >
-            <PlusCircle className="w-4 h-4 text-teal-300" />
+            <PlusCircle className="w-4 h-4 text-purple-200" />
             <span>Inscrire une entreprise mécène</span>
           </button>
         </div>
@@ -325,10 +325,10 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
 
       {/* ── BANDEAU ADMINISTRATEUR : Entreprises en attente de validation ── */}
       {isManager && pendingPartners.length > 0 && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 space-y-3 animate-in fade-in">
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 space-y-3 animate-in fade-in">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 text-amber-900 font-extrabold text-sm">
-              <Clock className="w-4 h-4 text-amber-600 animate-spin-slow" />
+            <div className="flex items-center gap-2.5 text-amber-300 font-extrabold text-sm">
+              <Clock className="w-4 h-4 text-amber-400 animate-spin-slow" />
               <span>
                 {pendingPartners.length} entreprise{pendingPartners.length > 1 ? 's' : ''} en attente de validation par l'administrateur
               </span>
@@ -337,7 +337,7 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
               href="/admin/cms/partner/?is_active__exact=0"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-amber-800 hover:text-amber-950 font-bold underline inline-flex items-center gap-1"
+              className="text-xs text-amber-300 hover:text-amber-100 font-bold underline inline-flex items-center gap-1"
             >
               <span>Ouvrir dans Django Admin</span>
               <ExternalLink className="w-3 h-3" />
@@ -348,42 +348,42 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
             {pendingPartners.map((item) => (
               <div
                 key={item.id}
-                className="p-3.5 rounded-xl bg-white border border-amber-200/80 shadow-2xs flex flex-col justify-between space-y-2 text-xs"
+                className="p-3.5 rounded-xl bg-[#140F2D] border border-amber-500/30 shadow-2xs flex flex-col justify-between space-y-2 text-xs"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-extrabold text-slate-900 truncate">{item.name}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold">
+                    <span className="font-extrabold text-white truncate">{item.name}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-950/70 border border-amber-800/50 text-amber-300 font-bold">
                       À valider
                     </span>
                   </div>
                   {item.contact_email && (
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <p className="text-[11px] text-slate-400 mt-0.5">
                       Contact : {item.contact_name || 'Non précisé'} ({item.contact_email})
                     </p>
                   )}
                   {item.description && (
-                    <p className="text-[11px] text-slate-600 italic mt-1 line-clamp-2">
+                    <p className="text-[11px] text-slate-300 italic mt-1 line-clamp-2">
                       « {item.description} »
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-2 pt-2 border-t border-[#281F4B]">
                   <button
                     type="button"
                     disabled={processingId === item.id}
                     onClick={() => handleApprovePartner(item.id)}
-                    className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-2xs active:scale-95 disabled:opacity-50"
+                    className="flex-1 py-1.5 px-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     <Check className="w-3.5 h-3.5" />
-                    <span>Valider & Afficher</span>
+                    <span>Valider &amp; Afficher</span>
                   </button>
                   <button
                     type="button"
                     disabled={processingId === item.id}
                     onClick={() => handleRejectPartner(item.id)}
-                    className="py-1.5 px-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] flex items-center justify-center transition-all disabled:opacity-50"
+                    className="py-1.5 px-2.5 rounded-full bg-rose-950/50 hover:bg-rose-900 border border-rose-800/40 text-rose-300 font-bold text-[11px] flex items-center justify-center transition-all disabled:opacity-50 cursor-pointer"
                     title="Supprimer la demande"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -402,10 +402,10 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
           return (
             <div
               key={partner.id}
-              className="group bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-brand-teal/40 transition-all flex flex-col items-center text-center justify-between min-h-[140px]"
+              className="group bg-[#140F2D] rounded-2xl p-4 border border-[#281F4B] shadow-md hover:border-purple-500/40 transition-all flex flex-col items-center text-center justify-between min-h-[140px]"
             >
               {/* Conteneur Logo */}
-              <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 overflow-hidden group-hover:scale-105 transition-transform">
+              <div className="w-16 h-16 rounded-xl bg-[#1D173C] border border-[#281F4B] flex items-center justify-center p-2 overflow-hidden group-hover:scale-105 transition-transform">
                 {hasImage ? (
                   <img
                     src={partner.logo_url}
@@ -414,7 +414,7 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-lg bg-gradient-to-br from-brand-blue to-brand-teal text-white flex flex-col items-center justify-center font-extrabold text-xs shadow-2xs">
+                  <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-700 to-indigo-900 text-white flex flex-col items-center justify-center font-extrabold text-xs shadow-2xs">
                     <span>{getCompanyInitials(partner.name)}</span>
                   </div>
                 )}
@@ -422,7 +422,7 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
 
               {/* Nom & catégorie */}
               <div className="space-y-1 w-full mt-2">
-                <h4 className="font-extrabold text-slate-800 text-xs leading-snug truncate group-hover:text-brand-blue transition-colors">
+                <h4 className="font-extrabold text-white text-xs leading-snug truncate group-hover:text-purple-300 transition-colors">
                   {partner.name}
                 </h4>
                 <p className="text-[10px] text-slate-400 font-medium truncate">
@@ -443,7 +443,7 @@ export const SponsorLogos: React.FC<SponsorLogosProps> = ({
                   href={partner.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-[10px] text-brand-teal hover:underline font-semibold"
+                  className="mt-2 inline-flex items-center gap-1 text-[10px] text-purple-400 hover:text-purple-300 hover:underline font-semibold"
                   title={`Visiter le site de ${partner.name}`}
                 >
                   <Globe className="w-2.5 h-2.5" />

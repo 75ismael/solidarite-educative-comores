@@ -534,15 +534,15 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
 
       {/* ── Carte principale du témoignage sélectionné ── */}
       {current ? (
-        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden transition-all duration-300">
+        <div className="bg-[#140F2D] rounded-3xl border border-[#281F4B] shadow-2xl overflow-hidden transition-all duration-300">
           <div className="p-6 sm:p-8 lg:p-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
               
               {/* Colonne gauche : Photo et informations */}
-              <div className="lg:col-span-4 flex flex-col items-center sm:items-start text-center sm:text-left space-y-4 border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0 lg:pr-8">
+              <div className="lg:col-span-4 flex flex-col items-center sm:items-start text-center sm:text-left space-y-4 border-b lg:border-b-0 lg:border-r border-[#281F4B] pb-6 lg:pb-0 lg:pr-8">
                 {/* Photo de profil */}
                 <div className="relative group">
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md ring-4 ring-brand-teal/15 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md ring-4 ring-purple-500/20 bg-[#1D173C] flex items-center justify-center">
                     {hasValidPhoto ? (
                       <img
                         src={photoUrl}
@@ -551,7 +551,7 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-brand-blue to-brand-teal flex items-center justify-center text-white text-2xl font-extrabold">
+                      <div className="w-full h-full bg-gradient-to-br from-purple-700 to-indigo-900 flex items-center justify-center text-white text-2xl font-extrabold">
                         {getInitials(current.name)}
                       </div>
                     )}
@@ -566,20 +566,20 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                 {/* Nom & rôle */}
                 <div className="space-y-1 w-full">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
+                    <h3 className="text-lg sm:text-xl font-extrabold text-white">
                       {current.name}
                     </h3>
                     <span title="Avis authentifié">
-                      <CheckCircle2 className="w-4 h-4 text-brand-teal shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                  <p className="text-xs sm:text-sm font-semibold text-slate-300">
                     {current.role}
                   </p>
 
                   {/* Localisation */}
-                  <div className="flex items-center justify-center sm:justify-start gap-1 text-xs text-slate-500 pt-1">
-                    <MapPin className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+                  <div className="flex items-center justify-center sm:justify-start gap-1 text-xs text-slate-400 pt-1">
+                    <MapPin className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                     <span>
                       {current.location}
                       {current.island ? ` (${current.island})` : ''}
@@ -590,8 +590,8 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                 {/* Matières concernées */}
                 {current.subjects && (
                   <div className="w-full pt-1">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-medium text-slate-600">
-                      <BookOpen className="w-3 h-3 text-brand-teal" />
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A1435] border border-[#281F4B] text-[11px] font-medium text-slate-300">
+                      <BookOpen className="w-3 h-3 text-purple-400" />
                       <span>{current.subjects}</span>
                     </div>
                   </div>
@@ -610,12 +610,12 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                     {[...Array(current.rating || 5)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-amber-400" />
                     ))}
-                    <span className="text-xs font-bold text-slate-700 ml-1.5">Note {current.rating || 5}/5</span>
+                    <span className="text-xs font-bold text-slate-300 ml-1.5">Note {current.rating || 5}/5</span>
                   </div>
 
                   {current.impact_badge && (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/70 border border-purple-800/50 text-purple-300 text-xs font-bold">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                       <span>{current.impact_badge}</span>
                     </div>
                   )}
@@ -623,23 +623,23 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
 
                 {/* Texte de l'avis avec icône citation */}
                 <div className="relative pl-1 sm:pl-2">
-                  <Quote className="w-10 h-10 sm:w-12 sm:h-12 text-brand-teal/15 absolute -top-4 -left-3 sm:-left-4 pointer-events-none" />
-                  <p className="text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed italic relative z-10 font-normal">
+                  <Quote className="w-10 h-10 sm:w-12 sm:h-12 text-purple-500/20 absolute -top-4 -left-3 sm:-left-4 pointer-events-none" />
+                  <p className="text-slate-200 text-sm sm:text-base lg:text-lg leading-relaxed italic relative z-10 font-normal">
                     « {current.quote} »
                   </p>
                 </div>
 
                 {/* Cadre de réassurance */}
-                <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+                <div className="pt-4 border-t border-[#281F4B] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>
                       {current.role_type === 'VOLUNTEER'
                         ? 'Mentor bénévole certifié par Solidarité Éducative'
                         : 'Soutien scolaire 100% gratuit et bienveillant'}
                     </span>
                   </div>
-                  <div className="font-semibold text-brand-blue">
+                  <div className="font-semibold text-purple-400">
                     Avis {currentIndex + 1} sur {total}
                   </div>
                 </div>
@@ -649,17 +649,17 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
           </div>
 
           {/* ── Barre de commande : Précédent & Suivant ── */}
-          <div className="bg-slate-50/90 border-t border-slate-100 px-6 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-[#0E0A20] border-t border-[#281F4B] px-6 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             
             {/* Bouton pour retourner / précédent */}
             <button
               type="button"
               onClick={handlePrev}
               disabled={total <= 1}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 hover:border-slate-300 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs sm:text-sm font-bold transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Retourner au témoignage précédent"
             >
-              <ChevronLeft className="w-4 h-4 text-brand-blue" />
+              <ChevronLeft className="w-4 h-4 text-purple-400" />
               <span>Avis précédent</span>
             </button>
 
@@ -670,10 +670,10 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                   key={it.id}
                   type="button"
                   onClick={() => handleSelect(idx)}
-                  className={`transition-all duration-300 rounded-full ${
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
                     idx === currentIndex
-                      ? 'w-7 sm:w-8 h-2.5 bg-brand-teal shadow-xs'
-                      : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400'
+                      ? 'w-7 sm:w-8 h-2.5 bg-purple-500 shadow-xs'
+                      : 'w-2.5 h-2.5 bg-slate-700 hover:bg-slate-500'
                   }`}
                   title={`Voir l'avis de ${it.name}`}
                   aria-label={`Aller à l'avis ${idx + 1}`}
@@ -686,16 +686,16 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
               type="button"
               onClick={handleNext}
               disabled={total <= 1}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs sm:text-sm font-bold shadow-2xs transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-purple-950/40 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Voir d'autres avis"
             >
               <span>Voir d'autres avis</span>
-              <ChevronRight className="w-4 h-4 text-teal-300" />
+              <ChevronRight className="w-4 h-4 text-purple-200" />
             </button>
           </div>
         </div>
       ) : (
-        <div className="p-8 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 text-sm">
+        <div className="p-8 text-center bg-[#140F2D] rounded-3xl border border-[#281F4B] text-slate-400 text-sm">
           Aucun avis trouvé dans cette catégorie.
         </div>
       )}
@@ -703,7 +703,7 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
       {/* ── Galerie de sélection directe ── */}
       {filteredItems.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
             Sélection directe ({filteredItems.length} avis disponibles) :
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
@@ -715,13 +715,13 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                   key={it.id}
                   type="button"
                   onClick={() => handleSelect(idx)}
-                  className={`p-2.5 rounded-2xl border text-left transition-all flex items-center gap-2.5 ${
+                  className={`p-2.5 rounded-2xl border text-left transition-all flex items-center gap-2.5 cursor-pointer ${
                     isSelected
-                      ? 'bg-teal-50/70 border-brand-teal ring-2 ring-brand-teal/20 shadow-xs'
-                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                      ? 'bg-purple-950/60 border-purple-500 ring-2 ring-purple-500/30 shadow-xs'
+                      : 'bg-[#140F2D] border-[#281F4B] hover:border-purple-500/40 hover:bg-[#1A1435]'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200 bg-slate-100 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#281F4B] bg-[#1D173C] flex items-center justify-center">
                     {thumbUrl && !imgError[it.id] ? (
                       <img
                         src={thumbUrl}
@@ -730,16 +730,16 @@ export const BeneficiaryTestimonials: React.FC<BeneficiaryTestimonialsProps> = (
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-[10px] font-extrabold text-slate-700">
+                      <span className="text-[10px] font-extrabold text-slate-200">
                         {getInitials(it.name)}
                       </span>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-xs font-bold truncate ${isSelected ? 'text-brand-teal' : 'text-slate-800'}`}>
+                    <p className={`text-xs font-bold truncate ${isSelected ? 'text-purple-300' : 'text-white'}`}>
                       {it.name.split(' ')[0]}
                     </p>
-                    <p className="text-[10px] text-slate-500 truncate">
+                    <p className="text-[10px] text-slate-400 truncate">
                       {it.role_type === 'VOLUNTEER' ? 'Mentor' : it.location}
                     </p>
                   </div>
