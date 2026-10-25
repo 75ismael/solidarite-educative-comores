@@ -135,7 +135,15 @@ export const Navbar: React.FC = () => {
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
                 >
                   <LayoutDashboard className="w-3 h-3 text-slate-400" />
-                  <span>Mon compte</span>
+                  <span>
+                    {user?.role === 'VOLUNTEER'
+                      ? 'Portail Bénévole'
+                      : user?.role === 'COORDINATOR'
+                      ? 'Coordination'
+                      : user?.role === 'PARENT'
+                      ? 'Espace Famille'
+                      : 'Mon compte'}
+                  </span>
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -447,7 +455,15 @@ export const Navbar: React.FC = () => {
                     className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-brand-blue text-white font-bold text-xs shadow-sm"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5" />
-                    <span>Mon compte</span>
+                    <span>
+                      {user?.role === 'VOLUNTEER'
+                        ? 'Portail Bénévole'
+                        : user?.role === 'COORDINATOR'
+                        ? 'Coordination'
+                        : user?.role === 'PARENT'
+                        ? 'Espace Famille'
+                        : 'Mon compte'}
+                    </span>
                   </Link>
                 ) : (
                   <Link

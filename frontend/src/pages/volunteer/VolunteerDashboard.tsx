@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { apiClient, extractResults } from '../../api/client';
-import { Pairing, TutoringSession } from '../../types';
+import { Pairing, TutoringSession, VolunteerProfile, SessionReport } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { LiaisonNotebookModal } from '../../components/LiaisonNotebookModal';
 import { LearningObjectivesModal } from '../../components/LearningObjectivesModal';
@@ -16,13 +16,43 @@ import {
   MapPin,
   MessageSquare,
   Target,
+  Award,
+  Download,
+  Search,
+  SlidersHorizontal,
+  ShieldCheck,
+  Sparkles,
+  RefreshCw,
+  AlertTriangle,
+  X,
+  ExternalLink,
+  FileText,
+  Check,
+  Video,
+  Phone,
+  UserCheck,
+  GraduationCap,
+  Star,
+  HeartHandshake,
+  BookMarked,
+  Printer,
+  ChevronDown,
 } from 'lucide-react';
+
+type TabType = 'overview' | 'students' | 'sessions' | 'toolkit' | 'certificate';
 
 export const VolunteerDashboard: React.FC = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
+
   const [pairings, setPairings] = useState<Pairing[]>([]);
   const [sessions, setSessions] = useState<TutoringSession[]>([]);
+  const [profile, setProfile] = useState<VolunteerProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Disponibilité toggle
+  const [updatingAvailability, setUpdatingAvailability] = useState(false);
 
   // Modals Carnet de liaison & Objectifs (F11, F09)
   const [selectedPairingForNotes, setSelectedPairingForNotes] = useState<Pairing | null>(null);
@@ -30,8 +60,9 @@ export const VolunteerDashboard: React.FC = () => {
 
   // Modal Saisie Compte Rendu (F08)
   const [reportingSession, setReportingSession] = useState<TutoringSession | null>(null);
+  const [submittingReport, setSubmittingReport] = useState(false);
   const [reportForm, setReportForm] = useState({
-    attendance: 'PRESENT',
+    attendance: 'PRESENT' as 'PRESENT' | 'ABSENT_JUSTIFIED' | 'ABSENT_UNJUSTIFIED',
     duration_actual_minutes: 90,
     topics_covered: '',
     exercises_done: '',
@@ -40,34 +71,57 @@ export const VolunteerDashboard: React.FC = () => {
     next_steps: '',
   });
 
+  // Modal Consultation Compte Rendu
+  const [viewingReportSession, setViewingReportSession] = useState<TutoringSession | null>(null);
+
   // Modal Planifier Séance (F07)
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [submittingSchedule, setSubmittingSchedule] = useState(false);
   const [scheduleForm, setScheduleForm] = useState({
     pairing_id: 0,
     title: '',
     scheduled_at: '',
     duration_minutes: 90,
-    mode: 'REMOTE',
+    mode: 'REMOTE' as 'REMOTE' | 'IN_PERSON',
     location_or_link: 'Appel WhatsApp',
   });
 
+  // Modal Annuler / Reporter Séance
+  const [cancellingSession, setCancellingSession] = useState<TutoringSession | null>(null);
+  const [cancellationReason, setCancellationReason] = useState('');
+  const [submittingCancel, setSubmittingCancel] = useState(false);
+
+  // Filtres onglet Séances
+  const [sessionSearch, setSessionSearch] = useState('');
+  const [sessionStatusFilter, setSessionStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'NEEDS_REPORT' | 'COMPLETED' | 'CANCELLED'>('ALL');
+  const [sessionPairingFilter, setSessionPairingFilter] = useState<number | 'ALL'>('ALL');
+
+  // Chargement des données
   const fetchData = async () => {
     try {
-      const [pairRes, sessRes] = await Promise.all([
+      const [pairRes, sessRes, profRes] = await Promise.all([
         apiClient.get<Pairing[]>('/matching/pairings/'),
         apiClient.get<TutoringSession[]>('/sessions/'),
+        apiClient.get<VolunteerProfile>('/volunteering/profile/me/').catch(() => null),
       ]);
+
       const pairList = extractResults<Pairing>(pairRes.data);
       const sessList = extractResults<TutoringSession>(sessRes.data);
       setPairings(pairList);
       setSessions(sessList);
-      if (pairList.length > 0) {
+
+      if (profRes && profRes.data) {
+        setProfile(profRes.data);
+      }
+
+      if (pairList.length > 0 && !scheduleForm.pairing_id) {
         setScheduleForm((prev) => ({ ...prev, pairing_id: pairList[0].id }));
       }
     } catch (err) {
-      console.error(err);
+      console.error('Erreur lors du chargement des données bénévole', err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -75,23 +129,61 @@ export const VolunteerDashboard: React.FC = () => {
     fetchData();
   }, []);
 
+  // Rafraîchir manuellement
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
+
+  // Basculer la disponibilité bénévole
+  const handleToggleAvailability = async () => {
+    if (!profile) return;
+    setUpdatingAvailability(true);
+    const newStatus = !profile.is_available_for_new_student;
+    try {
+      const res = await apiClient.put<VolunteerProfile>('/volunteering/profile/me/', {
+        is_available_for_new_student: newStatus,
+      });
+      setProfile(res.data);
+    } catch (err) {
+      alert("Erreur lors de la mise à jour de la disponibilité.");
+    } finally {
+      setUpdatingAvailability(false);
+    }
+  };
+
+  // Soumission d'un compte rendu de séance
   const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reportingSession) return;
+    setSubmittingReport(true);
     try {
       await apiClient.post('/sessions/reports/', {
         session: reportingSession.id,
         ...reportForm,
       });
       setReportingSession(null);
+      setReportForm({
+        attendance: 'PRESENT',
+        duration_actual_minutes: 90,
+        topics_covered: '',
+        exercises_done: '',
+        understanding_level: 3,
+        remaining_difficulties: '',
+        next_steps: '',
+      });
       fetchData();
     } catch (err) {
       alert("Erreur lors de l'enregistrement du compte rendu.");
+    } finally {
+      setSubmittingReport(false);
     }
   };
 
+  // Soumission de planification de séance
   const handleScheduleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmittingSchedule(true);
     try {
       await apiClient.post('/sessions/', {
         pairing: scheduleForm.pairing_id,
@@ -113,215 +205,1208 @@ export const VolunteerDashboard: React.FC = () => {
       fetchData();
     } catch (err) {
       alert("Erreur lors de la planification de la séance.");
+    } finally {
+      setSubmittingSchedule(false);
     }
   };
 
+  // Annuler une séance
+  const handleCancelSessionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cancellingSession) return;
+    setSubmittingCancel(true);
+    try {
+      await apiClient.patch(`/sessions/${cancellingSession.id}/`, {
+        status: 'CANCELLED',
+        cancellation_reason: cancellationReason.trim() || 'Séance reportée à la demande du binôme',
+      });
+      setCancellingSession(null);
+      setCancellationReason('');
+      fetchData();
+    } catch (err) {
+      alert("Erreur lors de l'annulation de la séance.");
+    } finally {
+      setSubmittingCancel(false);
+    }
+  };
+
+  // KPIs & Statistiques
+  const stats = useMemo(() => {
+    const now = new Date();
+    const completedSessions = sessions.filter((s) => s.status === 'COMPLETED');
+    const scheduledSessions = sessions.filter(
+      (s) => s.status === 'SCHEDULED' && new Date(s.scheduled_at) >= now
+    );
+    const pastPendingReportSessions = sessions.filter(
+      (s) => s.status === 'SCHEDULED' && new Date(s.scheduled_at) < now && !s.report
+    );
+
+    // Calcul du total d'heures dispensées
+    const totalMinutes = completedSessions.reduce((acc, curr) => {
+      const mins = curr.report?.duration_actual_minutes || curr.duration_minutes || 90;
+      return acc + mins;
+    }, 0);
+
+    const hours = Math.floor(totalMinutes / 60);
+    const remainingMins = totalMinutes % 60;
+    const hoursFormatted = remainingMins > 0 ? `${hours}h${remainingMins}` : `${hours}h`;
+
+    // Taux d'assiduité
+    const sessionsWithReports = sessions.filter((s) => s.report);
+    const presentCount = sessionsWithReports.filter((s) => s.report?.attendance === 'PRESENT').length;
+    const attendanceRate =
+      sessionsWithReports.length > 0
+        ? Math.round((presentCount / sessionsWithReports.length) * 100)
+        : 100;
+
+    return {
+      totalHoursFormatted: hoursFormatted || '0h',
+      totalMinutes,
+      completedCount: completedSessions.length,
+      activePairingsCount: pairings.filter((p) => p.status === 'ACTIVE').length,
+      totalPairingsCount: pairings.length,
+      scheduledCount: scheduledSessions.length,
+      pendingReportsCount: pastPendingReportSessions.length,
+      pastPendingReportSessions,
+      attendanceRate,
+    };
+  }, [sessions, pairings]);
+
+  // Prochaine séance planifiée
+  const nextSession = useMemo(() => {
+    const now = new Date();
+    const upcoming = sessions
+      .filter((s) => s.status === 'SCHEDULED' && new Date(s.scheduled_at) >= now)
+      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+    return upcoming[0] || null;
+  }, [sessions]);
+
+  // Séances filtrées pour l'onglet "Séances & Agenda"
+  const filteredSessions = useMemo(() => {
+    const now = new Date();
+    return sessions.filter((s) => {
+      // Recherche textuelle
+      if (sessionSearch.trim()) {
+        const query = sessionSearch.toLowerCase();
+        const studentName = `${s.pairing_details?.student_details?.first_name || ''} ${s.pairing_details?.student_details?.last_name_initial || ''}`.toLowerCase();
+        const title = s.title.toLowerCase();
+        if (!studentName.includes(query) && !title.includes(query)) {
+          return false;
+        }
+      }
+
+      // Filtre binôme
+      if (sessionPairingFilter !== 'ALL' && s.pairing !== sessionPairingFilter) {
+        return false;
+      }
+
+      // Filtre statut
+      if (sessionStatusFilter === 'SCHEDULED') {
+        return s.status === 'SCHEDULED' && new Date(s.scheduled_at) >= now;
+      }
+      if (sessionStatusFilter === 'NEEDS_REPORT') {
+        return s.status === 'SCHEDULED' && new Date(s.scheduled_at) < now && !s.report;
+      }
+      if (sessionStatusFilter === 'COMPLETED') {
+        return s.status === 'COMPLETED';
+      }
+      if (sessionStatusFilter === 'CANCELLED') {
+        return s.status === 'CANCELLED' || s.status === 'MISSED';
+      }
+
+      return true;
+    });
+  }, [sessions, sessionSearch, sessionStatusFilter, sessionPairingFilter]);
+
   if (loading) {
-    return <div className="text-center py-20 text-sm text-slate-500">Chargement de votre espace...</div>;
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-3">
+        <div className="w-8 h-8 border-3 border-brand-teal/30 border-t-brand-teal rounded-full animate-spin" />
+        <p className="text-sm font-semibold text-slate-500">Chargement de votre portail bénévole...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* En-tête */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-teal">
-            Portail Bénévole
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-blue">
-            Bonjour, {user?.first_name || user?.username} 👋
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Gérez vos séances de tutorat et complétez les bilans après chaque cours.
-          </p>
-        </div>
-
-        {pairings.length > 0 && (
-          <button
-            onClick={() => setShowScheduleModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-teal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm shadow transition-colors"
-          >
-            <PlusCircle className="w-4 h-4" />
-            Planifier une nouvelle séance
-          </button>
-        )}
-      </div>
-
-      {/* 1. Mes Binômes Actifs */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-brand-teal" />
-          Mes Élèves & Binômes ({pairings.length})
-        </h2>
-
-        {pairings.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-2">
-            <p className="text-sm font-semibold text-slate-700">
-              Aucun binôme ne vous est encore attribué.
-            </p>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Notre équipe de coordination examine les demandes et vous contactera dès qu'un élève correspond à vos disponibilités.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {pairings.map((p) => (
-              <div
-                key={p.id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-teal-50 text-teal-800">
-                    {p.subject_details?.name}
-                  </span>
-                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                    {p.status_display}
-                  </span>
+    <div className="min-h-screen bg-slate-50/60 pb-16">
+      {/* ── BANDEAU HERO DU PORTAIL BÉNÉVOLE ── */}
+      <div className="bg-gradient-to-r from-brand-blue via-slate-800 to-teal-900 text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            
+            {/* Profil & Badges de certification */}
+            <div className="flex items-start gap-4 sm:gap-5">
+              <div className="relative">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-brand-teal flex items-center justify-center text-white font-extrabold text-xl shadow-lg border-2 border-white/20 shrink-0">
+                  {user?.first_name?.[0] || 'B'}{user?.last_name?.[0] || 'M'}
                 </div>
-
-                <div>
-                  <h3 className="font-extrabold text-base text-slate-900">
-                    {p.student_details?.first_name} {p.student_details?.last_name_initial}
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Code anonymisé : <span className="font-mono">{p.student_details?.anonymous_code}</span> • {p.student_details?.grade}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 text-xs text-slate-600 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{p.student_details?.island_display} ({p.student_details?.city})</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Rythme : {p.weekly_frequency}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                  <button
-                    onClick={() => setSelectedPairingForNotes(p)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold border border-teal-200 transition-colors"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    Carnet de liaison
-                  </button>
-                  <button
-                    onClick={() => setSelectedPairingForObjectives(p)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200 transition-colors"
-                  >
-                    <Target className="w-3.5 h-3.5 text-brand-teal" />
-                    Objectifs (F09)
-                  </button>
+                <div
+                  className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-400 border-2 border-slate-900 flex items-center justify-center"
+                  title="Compte mentor actif"
+                >
+                  <Check className="w-3 h-3 text-slate-900 stroke-[3]" />
                 </div>
               </div>
-            ))}
+
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-400/30">
+                    Portail Mentor & Tuteur Bénévole
+                  </span>
+                  {profile?.verification_status === 'VERIFIED' ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                      <ShieldCheck className="w-3 h-3 text-emerald-300" />
+                      Profil Certifié & Validé
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                      <Clock className="w-3 h-3 text-amber-300" />
+                      Vérification en cours
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+                    <ShieldCheck className="w-3 h-3" />
+                    Charte F14 signée
+                  </span>
+                </div>
+
+                <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+                  Bonjour, {user?.first_name || 'Bénévole'} {user?.last_name || ''} 👋
+                </h1>
+
+                <p className="text-xs sm:text-sm text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span>{user?.email}</span>
+                  {user?.city && (
+                    <span className="flex items-center gap-1 text-teal-200">
+                      <MapPin className="w-3 h-3" />
+                      {user.city} ({user.island})
+                    </span>
+                  )}
+                  {profile?.profession_or_studies && (
+                    <span className="text-slate-400">• {profile.profession_or_studies}</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Actions rapides du header */}
+            <div className="flex flex-wrap items-center gap-2.5 sm:self-end lg:self-center">
+              {/* Bouton de bascule de disponibilité */}
+              <button
+                type="button"
+                onClick={handleToggleAvailability}
+                disabled={updatingAvailability}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all shadow-xs ${
+                  profile?.is_available_for_new_student
+                    ? 'bg-emerald-500/20 hover:bg-emerald-500/30 border-emerald-400/40 text-emerald-200'
+                    : 'bg-slate-700/60 hover:bg-slate-700 border-slate-600 text-slate-300'
+                }`}
+                title="Cliquer pour changer votre statut de disponibilité pour un nouvel élève"
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    profile?.is_available_for_new_student ? 'bg-emerald-400 animate-pulse' : 'bg-slate-400'
+                  }`}
+                />
+                <span>
+                  {profile?.is_available_for_new_student
+                    ? 'Disponible pour nouvel élève'
+                    : 'En pause temporaire'}
+                </span>
+              </button>
+
+              {/* Bouton Planifier séance */}
+              {pairings.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowScheduleModal(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-teal hover:bg-teal-700 text-white font-bold text-xs shadow-sm transition-all active:scale-95"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Planifier une séance</span>
+                </button>
+              )}
+
+              {/* Rafraîchir */}
+              <button
+                type="button"
+                onClick={handleRefresh}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
+                title="Actualiser les données"
+              >
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
           </div>
-        )}
+        </div>
       </div>
 
-      {/* 2. Calendrier & Séances de tutorat (F07, F08) */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-brand-teal" />
-          Séances de tutorat & Comptes rendus
-        </h2>
-
-        {sessions.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-xs text-slate-500">
-            Aucune séance planifiée pour le moment.
+      {/* ── BARRE DE NAVIGATION PAR ONGLETS ── */}
+      <div className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2">
+            {[
+              { id: 'overview', label: "Vue d'ensemble", icon: Sparkles },
+              {
+                id: 'students',
+                label: 'Mes Élèves & Binômes',
+                icon: BookOpen,
+                count: stats.totalPairingsCount,
+              },
+              {
+                id: 'sessions',
+                label: 'Séances & Agenda',
+                icon: Calendar,
+                badge: stats.pendingReportsCount > 0 ? `${stats.pendingReportsCount} à rédiger` : undefined,
+              },
+              { id: 'toolkit', label: 'Boîte à Outils Pédagogique', icon: BookMarked },
+              { id: 'certificate', label: "Attestation d'Engagement", icon: Award },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${
+                    active
+                      ? 'bg-brand-blue text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${active ? 'text-teal-300' : 'text-slate-400'}`} />
+                  <span>{tab.label}</span>
+                  {tab.count !== undefined && (
+                    <span
+                      className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                        active ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  )}
+                  {tab.badge && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-white animate-pulse">
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
-                  <tr>
-                    <th className="py-3 px-4">Date & Heure</th>
-                    <th className="py-3 px-4">Élève</th>
-                    <th className="py-3 px-4">Sujet de la séance</th>
-                    <th className="py-3 px-4">Statut</th>
-                    <th className="py-3 px-4 text-right">Compte rendu</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700">
-                  {sessions.map((s) => (
-                    <tr key={s.id} className="hover:bg-slate-50/50">
-                      <td className="py-3 px-4 whitespace-nowrap font-medium text-slate-900">
-                        {new Date(s.scheduled_at).toLocaleDateString('fr-FR', {
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+        
+        {/* ── BANDEAU D'ALERTE : COMPTE RENDU EN RETARD ── */}
+        {stats.pendingReportsCount > 0 && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="font-extrabold text-sm text-amber-950">
+                  {stats.pendingReportsCount} compte{stats.pendingReportsCount > 1 ? 's' : ''} rendu{stats.pendingReportsCount > 1 ? 's' : ''} post-séance à compléter
+                </h3>
+                <p className="text-xs text-amber-800">
+                  Renseignez les notions travaillées et les progrès pour tenir informés la famille et le coordinateur pédagogique.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const pending = stats.pastPendingReportSessions[0];
+                if (pending) setReportingSession(pending);
+              }}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0"
+            >
+              <FileCheck className="w-4 h-4" />
+              <span>Compléter le compte rendu</span>
+            </button>
+          </div>
+        )}
+
+        {/* ── CARTES KPI STATISTIQUES ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider">Volume de tutorat</span>
+              <Clock className="w-4 h-4 text-brand-teal" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-brand-blue">
+              {stats.totalHoursFormatted}
+            </div>
+            <p className="text-[11px] text-slate-400">Heures dispensées avec les élèves</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider">Séances réalisées</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              {stats.completedCount}
+            </div>
+            <p className="text-[11px] text-slate-400">Cours complétés & validés</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider">Élèves en suivi</span>
+              <GraduationCap className="w-4 h-4 text-purple-600" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              {stats.activePairingsCount}
+            </div>
+            <p className="text-[11px] text-slate-400">Binômes actifs cette année</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider">Assiduité moyenne</span>
+              <Award className="w-4 h-4 text-amber-500" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              {stats.attendanceRate}%
+            </div>
+            <p className="text-[11px] text-slate-400">Présence constatée en séance</p>
+          </div>
+        </div>
+
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* ONGLET 1 : VUE D'ENSEMBLE                                      */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            
+            {/* Spotlight Prochaine Séance */}
+            {nextSession ? (
+              <div className="bg-gradient-to-br from-white to-teal-50/50 rounded-3xl border border-teal-200/80 p-6 sm:p-7 shadow-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-brand-teal text-white shadow-2xs">
+                        Prochaine séance
+                      </span>
+                      <span className="text-xs font-bold text-brand-teal">
+                        {new Date(nextSession.scheduled_at).toLocaleDateString('fr-FR', {
+                          weekday: 'long',
                           day: 'numeric',
-                          month: 'short',
+                          month: 'long',
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
-                      </td>
-                      <td className="py-3 px-4">
-                        {s.pairing_details?.student_details?.first_name}{' '}
-                        {s.pairing_details?.student_details?.last_name_initial}
-                      </td>
-                      <td className="py-3 px-4">{s.title}</td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                            s.status === 'COMPLETED'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-amber-50 text-amber-800'
-                          }`}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
+                      {nextSession.title}
+                    </h3>
+
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+                      <span className="font-bold text-slate-900">
+                        Élève : {nextSession.pairing_details?.student_details?.first_name} {nextSession.pairing_details?.student_details?.last_name_initial}
+                      </span>
+                      <span>•</span>
+                      <span className="px-2 py-0.5 rounded bg-slate-100 font-semibold text-slate-700">
+                        {nextSession.pairing_details?.subject_details?.name}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1 text-slate-500">
+                        {nextSession.mode === 'REMOTE' ? <Video className="w-3.5 h-3.5 text-brand-teal" /> : <MapPin className="w-3.5 h-3.5 text-brand-teal" />}
+                        {nextSession.location_or_link || 'WhatsApp / Visio'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {nextSession.pairing_details && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForNotes(nextSession.pairing_details!)}
+                          className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-brand-teal text-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5"
                         >
-                          {s.status_display}
+                          <MessageSquare className="w-3.5 h-3.5 text-brand-teal" />
+                          <span>Carnet de liaison</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForObjectives(nextSession.pairing_details!)}
+                          className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-brand-teal text-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5"
+                        >
+                          <Target className="w-3.5 h-3.5 text-brand-teal" />
+                          <span>Objectifs</span>
+                        </button>
+                      </>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setCancellingSession(nextSession)}
+                      className="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    >
+                      Annuler / Reporter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 text-center space-y-2">
+                <Calendar className="w-8 h-8 text-slate-300 mx-auto" />
+                <h3 className="font-extrabold text-sm text-slate-800">
+                  Aucune séance planifiée dans les prochains jours
+                </h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Consultez les disponibilités de votre élève et planifiez votre prochaine session de soutien.
+                </p>
+                {pairings.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowScheduleModal(true)}
+                    className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 transition-colors"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    <span>Programmer une séance maintenant</span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Mes Élèves Actifs (Aperçu) */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-brand-teal" />
+                  <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
+                    Mes Binômes Actifs ({pairings.length})
+                  </h2>
+                </div>
+                {pairings.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('students')}
+                    className="text-xs font-bold text-brand-teal hover:underline flex items-center gap-1"
+                  >
+                    <span>Voir tous les détails</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {pairings.length === 0 ? (
+                <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-50 text-brand-teal flex items-center justify-center mx-auto">
+                    <HeartHandshake className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">
+                    Aucun binôme ne vous est encore attribué
+                  </h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
+                    L'équipe de coordination pédagogique analyse actuellement les demandes d'élèves correspondant à vos matières et disponibilités. Vous serez notifié par email dès qu'un jumelage est prêt.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  {pairings.map((p) => (
+                    <div
+                      key={p.id}
+                      className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-2xs hover:shadow-md transition-all space-y-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-blue to-brand-teal text-white flex items-center justify-center font-extrabold text-base shadow-xs shrink-0">
+                            {p.student_details?.first_name?.[0] || 'E'}
+                          </div>
+                          <div>
+                            <h3 className="font-extrabold text-base text-slate-900 leading-snug">
+                              {p.student_details?.first_name} {p.student_details?.last_name_initial}
+                            </h3>
+                            <p className="text-xs text-slate-500 font-mono">
+                              {p.student_details?.anonymous_code} • {p.student_details?.grade} ({p.student_details?.school_level})
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-teal-50 text-brand-teal border border-teal-200 shrink-0">
+                          {p.subject_details?.name}
                         </span>
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        {s.report ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-semibold">
-                            <CheckCircle2 className="w-4 h-4" /> Validé
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => setReportingSession(s)}
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 transition-colors"
-                          >
-                            <FileCheck className="w-3.5 h-3.5" />
-                            Remplir le CR
-                          </button>
-                        )}
-                      </td>
-                    </tr>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="truncate">{p.student_details?.city}, {p.student_details?.island_display}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 truncate">
+                          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="truncate">Rythme : {p.weekly_frequency}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForNotes(p)}
+                          className="flex-1 py-2 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-brand-teal font-bold text-xs border border-teal-200 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Carnet (F11)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForObjectives(p)}
+                          className="flex-1 py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <Target className="w-3.5 h-3.5 text-brand-teal" />
+                          <span>Objectifs (F09)</span>
+                        </button>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              )}
             </div>
+
+            {/* Raccourcis professionnels */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div
+                onClick={() => setActiveTab('certificate')}
+                className="bg-white rounded-2xl p-5 border border-slate-200 hover:border-brand-teal/50 shadow-2xs hover:shadow-md cursor-pointer transition-all space-y-2 group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Award className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-sm text-slate-900 group-hover:text-brand-teal transition-colors">
+                  Attestation d'Engagement Bénévole
+                </h4>
+                <p className="text-xs text-slate-500">
+                  Générez et téléchargez votre justificatif officiel d'heures de tutorat pour votre CV ou université.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('toolkit')}
+                className="bg-white rounded-2xl p-5 border border-slate-200 hover:border-brand-teal/50 shadow-2xs hover:shadow-md cursor-pointer transition-all space-y-2 group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <BookMarked className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-sm text-slate-900 group-hover:text-brand-teal transition-colors">
+                  Boîte à Outils & Annales Scolaires
+                </h4>
+                <p className="text-xs text-slate-500">
+                  Accédez aux fiches méthodologiques, programmes d'examens (Brevet & Bac) et guides de cours.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('sessions')}
+                className="bg-white rounded-2xl p-5 border border-slate-200 hover:border-brand-teal/50 shadow-2xs hover:shadow-md cursor-pointer transition-all space-y-2 group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-sm text-slate-900 group-hover:text-brand-teal transition-colors">
+                  Historique des Comptes Rendus
+                </h4>
+                <p className="text-xs text-slate-500">
+                  Consultez l'historique complet des notions travaillées et des bilans d'assimilation des élèves.
+                </p>
+              </div>
+            </div>
+
           </div>
         )}
-      </div>
 
-      {/* MODAL 1 : Saisie Compte Rendu (F08) */}
-      {reportingSession && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl space-y-5">
-            <div>
-              <span className="text-xs font-bold text-brand-teal uppercase tracking-wide">
-                Compte rendu post-séance (F08)
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                {reportingSession.title}
-              </h3>
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* ONGLET 2 : MES ÉLÈVES & BINÔMES DÉTAILLÉS                      */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'students' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-brand-blue">
+                  Élèves & Binômes sous ma responsabilité ({pairings.length})
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Accompagnement pédagogique individuel, suivi du carnet de liaison et atteinte des objectifs.
+                </p>
+              </div>
+
+              {pairings.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowScheduleModal(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow-2xs transition-colors shrink-0"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Programmer une séance</span>
+                </button>
+              )}
+            </div>
+
+            {pairings.length === 0 ? (
+              <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-3">
+                <HeartHandshake className="w-10 h-10 text-slate-300 mx-auto" />
+                <h3 className="font-extrabold text-slate-800 text-sm">
+                  Aucun élève attribué pour le moment
+                </h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
+                  Dès qu'un élève nécessitant un soutien dans vos matières est validé par notre coordinateur, il apparaîtra ici.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {pairings.map((p) => {
+                  const studentSessions = sessions.filter((s) => s.pairing === p.id);
+                  const completedCount = studentSessions.filter((s) => s.status === 'COMPLETED').length;
+
+                  return (
+                    <div
+                      key={p.id}
+                      className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 space-y-5"
+                    >
+                      {/* En-tête de la carte */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-blue to-brand-teal text-white font-extrabold flex items-center justify-center text-lg shadow-xs">
+                            {p.student_details?.first_name?.[0] || 'E'}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-extrabold text-base text-slate-900">
+                                {p.student_details?.first_name} {p.student_details?.last_name_initial}
+                              </h3>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                {p.status_display}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 font-mono mt-0.5">
+                              Identifiant sécurisé : <span className="font-bold text-brand-blue">{p.student_details?.anonymous_code}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="px-3 py-1 rounded-xl text-xs font-bold bg-teal-50 text-brand-teal border border-teal-200">
+                          {p.subject_details?.name}
+                        </span>
+                      </div>
+
+                      {/* Grille d'informations pratiques */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs text-slate-600 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 block uppercase">Niveau & Classe</span>
+                          <span className="font-bold text-slate-800">{p.student_details?.grade}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 block uppercase">Localité</span>
+                          <span className="font-bold text-slate-800 truncate block">
+                            {p.student_details?.city || p.student_details?.island_display}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 block uppercase">Rythme fixé</span>
+                          <span className="font-bold text-slate-800">{p.weekly_frequency}</span>
+                        </div>
+                      </div>
+
+                      {/* Objectifs pédagogiques résumés */}
+                      {p.general_goals && (
+                        <div className="text-xs space-y-1">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                            Objectif global prioritaire :
+                          </span>
+                          <p className="text-slate-700 bg-teal-50/50 p-2.5 rounded-xl border border-teal-100/70 italic text-[11px] leading-relaxed">
+                            « {p.general_goals} »
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Compteur séances */}
+                      <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                        <span>Séances réalisées pour ce binôme :</span>
+                        <span className="font-extrabold text-slate-800">{completedCount} séance{completedCount > 1 ? 's' : ''}</span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForNotes(p)}
+                          className="py-2.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-brand-teal font-bold text-xs border border-teal-200 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Carnet de liaison (F11)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPairingForObjectives(p)}
+                          className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <Target className="w-3.5 h-3.5 text-brand-teal" />
+                          <span>Objectifs (F09)</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* ONGLET 3 : SÉANCES & AGENDA DÉTAILLÉ                           */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'sessions' && (
+          <div className="space-y-6">
+            
+            {/* Barre d'outils filtres & recherche */}
+            <div className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par élève ou sujet de séance..."
+                    value={sessionSearch}
+                    onChange={(e) => setSessionSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm focus:border-brand-teal focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {pairings.length > 0 && (
+                    <select
+                      value={sessionPairingFilter}
+                      onChange={(e) => setSessionPairingFilter(e.target.value === 'ALL' ? 'ALL' : Number(e.target.value))}
+                      className="text-xs py-2 px-3 border border-slate-200 rounded-xl bg-white focus:outline-none"
+                    >
+                      <option value="ALL">Tous les élèves</option>
+                      {pairings.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.student_details?.first_name} ({p.subject_details?.name})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowScheduleModal(true)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow-2xs transition-colors shrink-0"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    <span>Nouvelle séance</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Puces de filtrage par statut */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1">
+                {[
+                  { key: 'ALL', label: 'Toutes les séances' },
+                  { key: 'SCHEDULED', label: 'À venir / Planifiées' },
+                  {
+                    key: 'NEEDS_REPORT',
+                    label: 'En attente de compte rendu',
+                    count: stats.pendingReportsCount,
+                  },
+                  { key: 'COMPLETED', label: 'Terminées & Validées' },
+                  { key: 'CANCELLED', label: 'Annulées / Absences' },
+                ].map((st) => {
+                  const active = sessionStatusFilter === st.key;
+                  return (
+                    <button
+                      key={st.key}
+                      type="button"
+                      onClick={() => setSessionStatusFilter(st.key as any)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
+                        active
+                          ? 'bg-brand-blue text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      <span>{st.label}</span>
+                      {st.count !== undefined && st.count > 0 && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500 text-white font-extrabold">
+                          {st.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Liste des séances */}
+            {filteredSessions.length === 0 ? (
+              <div className="bg-white rounded-3xl border border-slate-200 p-10 text-center text-xs text-slate-500 space-y-2">
+                <Calendar className="w-8 h-8 text-slate-300 mx-auto" />
+                <p>Aucune séance ne correspond aux critères de recherche sélectionnés.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredSessions.map((s) => {
+                  const isPast = new Date(s.scheduled_at) < new Date();
+                  const needsReport = isPast && s.status === 'SCHEDULED' && !s.report;
+
+                  return (
+                    <div
+                      key={s.id}
+                      className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                        needsReport
+                          ? 'border-amber-300 bg-amber-50/30'
+                          : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-700 flex flex-col items-center justify-center shrink-0 border border-slate-200">
+                          <span className="text-[10px] uppercase font-bold text-slate-500 leading-none">
+                            {new Date(s.scheduled_at).toLocaleDateString('fr-FR', { month: 'short' })}
+                          </span>
+                          <span className="text-base font-extrabold text-slate-900 leading-tight">
+                            {new Date(s.scheduled_at).getDate()}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="font-extrabold text-sm text-slate-900">
+                              {s.title}
+                            </h4>
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                s.status === 'COMPLETED'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : s.status === 'CANCELLED'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : needsReport
+                                  ? 'bg-amber-100 text-amber-900 border border-amber-300 font-extrabold'
+                                  : 'bg-teal-50 text-brand-teal border border-teal-200'
+                              }`}
+                            >
+                              {needsReport ? 'Compte rendu requis' : s.status_display}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                            <span className="font-semibold text-slate-800">
+                              {s.pairing_details?.student_details?.first_name} {s.pairing_details?.student_details?.last_name_initial}
+                            </span>
+                            <span>•</span>
+                            <span>{s.pairing_details?.subject_details?.name}</span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {new Date(s.scheduled_at).toLocaleTimeString('fr-FR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })} ({s.duration_minutes} min)
+                            </span>
+                            <span>•</span>
+                            <span className="text-slate-600">
+                              {s.location_or_link || 'Visio WhatsApp'}
+                            </span>
+                          </div>
+
+                          {s.cancellation_reason && (
+                            <p className="text-[11px] text-rose-600 italic">
+                              Motif : {s.cancellation_reason}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 sm:self-end md:self-center shrink-0">
+                        {s.report ? (
+                          <button
+                            type="button"
+                            onClick={() => setViewingReportSession(s)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-brand-teal" />
+                            <span>Voir le bilan</span>
+                          </button>
+                        ) : needsReport ? (
+                          <button
+                            type="button"
+                            onClick={() => setReportingSession(s)}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow-2xs transition-colors"
+                          >
+                            <FileCheck className="w-3.5 h-3.5" />
+                            <span>Remplir le CR</span>
+                          </button>
+                        ) : s.status === 'SCHEDULED' ? (
+                          <button
+                            type="button"
+                            onClick={() => setCancellingSession(s)}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          >
+                            Modifier / Annuler
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* ONGLET 4 : BOÎTE À OUTILS PÉDAGOGIQUE & GUIDE DU MENTOR         */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'toolkit' && (
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="text-lg sm:text-xl font-extrabold text-brand-blue">
+                Boîte à Outils Pédagogique du Mentor Bénévole
+              </h2>
               <p className="text-xs text-slate-500">
-                Élève : {reportingSession.pairing_details?.student_details?.first_name} ({reportingSession.pairing_details?.student_details?.anonymous_code})
+                Méthodes recommandées, programmes officiels des Comores et protocole de protection des mineurs.
               </p>
             </div>
 
-            <form onSubmit={handleReportSubmit} className="space-y-4">
+            {/* Les 4 temps d'une séance réussie */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-2xs space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-brand-teal" />
+                <h3 className="font-extrabold text-base text-slate-900">
+                  La structure type d'une séance de 1h30
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                  {
+                    step: '1. Accueil & Écoute (10 min)',
+                    desc: 'Prendre des nouvelles, vérifier le moral de l’élève et passer en revue les résultats des derniers devoirs surveillés.',
+                  },
+                  {
+                    step: '2. Révision du cours (25 min)',
+                    desc: 'Reprendre la leçon du collège/lycée avec ses propres mots, identifier les incompréhensions et reformuler les définitions clés.',
+                  },
+                  {
+                    step: '3. Pratique guidée (40 min)',
+                    desc: 'Résolution d’exercices progressifs. Laisser l’élève chercher en autonomie avant de donner des indices méthodologiques.',
+                  },
+                  {
+                    step: '4. Synthèse & Carnet (15 min)',
+                    desc: 'Faire résumer à l’élève ce qu’il a retenu, fixer 1 ou 2 exercices d’entraînement et compléter le compte rendu de séance.',
+                  },
+                ].map((s, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <span className="text-xs font-extrabold text-brand-blue block">{s.step}</span>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Règles déontologiques & Protection F14 */}
+            <div className="bg-gradient-to-br from-cyan-50 to-teal-50/50 rounded-3xl p-6 border border-cyan-200 space-y-3">
+              <div className="flex items-center gap-2 text-brand-blue font-bold text-sm">
+                <ShieldCheck className="w-5 h-5 text-brand-teal" />
+                <span>Rappel de déontologie & Protection des mineurs (F14)</span>
+              </div>
+              <ul className="text-xs text-slate-700 space-y-2 list-disc list-inside leading-relaxed">
+                <li>
+                  <strong>Transparence avec la famille :</strong> Les parents sont systématiquement prévenus des dates de cours. Utilisez le carnet de liaison pour les bilans.
+                </li>
+                <li>
+                  <strong>Pas de communications privées isolées :</strong> Tous les échanges se font dans le respect du cadre associatif et pédagogique.
+                </li>
+                <li>
+                  <strong>Signalement d'une difficulté :</strong> En cas de doute sur la sécurité ou la détresse d'un enfant, prévenez immédiatement le coordinateur de l'association.
+                </li>
+              </ul>
+            </div>
+
+            {/* Contacts & Coordination */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-3">
+              <h3 className="font-extrabold text-sm text-slate-900">
+                Besoin d'un conseil pédagogique ou d'un appui ?
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                L'équipe de coordination de Solidarité Éducative Comores est à votre écoute pour vous aider à adapter les exercices, vous fournir des manuels ou faire le point sur votre binôme.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <a
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-blue hover:bg-slate-900 text-white text-xs font-bold transition-colors"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>Contacter la coordination</span>
+                </a>
+                <a
+                  href="/demande-soutien#temoignages"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                >
+                  <Star className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Donner votre retour d'expérience mentor</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* ONGLET 5 : ATTESTATION D'ENGAGEMENT OFFICIELLE                  */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'certificate' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-brand-blue">
+                  Attestation d'Engagement Citoyen & Bénévolat
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Document officiel valorisant vos heures d'accompagnement pour votre parcours professionnel ou académique.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-teal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm shadow-xs transition-colors shrink-0"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Imprimer l'attestation</span>
+              </button>
+            </div>
+
+            {/* Certificat Visuel Stylisé */}
+            <div className="bg-white rounded-3xl border-2 border-slate-300 p-8 sm:p-12 shadow-md relative overflow-hidden space-y-8">
+              {/* Filigrane discret */}
+              <div className="absolute right-4 bottom-4 opacity-5 pointer-events-none">
+                <Award className="w-72 h-72 text-brand-blue" />
+              </div>
+
+              {/* En-tête certificat */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-slate-100 pb-6 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-blue text-white flex items-center justify-center font-extrabold text-xl shadow">
+                    SEC
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-base text-brand-blue uppercase tracking-wider">
+                      Solidarité Éducative Comores
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      Association d'accompagnement scolaire & mentorat solidaire
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right text-xs text-slate-400">
+                  <p>Référence : ATTEST-{user?.id || 1}-{new Date().getFullYear()}</p>
+                  <p>Date d'émission : {new Date().toLocaleDateString('fr-FR')}</p>
+                </div>
+              </div>
+
+              {/* Corps de l'attestation */}
+              <div className="space-y-4 text-center max-w-2xl mx-auto py-4">
+                <span className="text-xs font-bold uppercase tracking-widest text-brand-teal">
+                  Certificat d'engagement bénévole
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-serif">
+                  Attestation de Tutorat Scolaire Solidaire
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pt-2">
+                  La coordination de l'association <strong>Solidarité Éducative Comores</strong> certifie par la présente que :
+                </p>
+                <div className="py-2">
+                  <p className="text-xl sm:text-2xl font-extrabold text-brand-blue underline decoration-brand-teal decoration-2 underline-offset-4">
+                    {user?.first_name} {user?.last_name}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Bénévole engagé(e) • {user?.email}
+                  </p>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                  a assuré avec rigueur, bienveillance et assiduité un accompagnement scolaire individualisé totalisant :
+                </p>
+                
+                <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 my-3 inline-block">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-brand-teal">
+                    {stats.totalHoursFormatted}
+                  </span>
+                  <span className="text-xs text-teal-800 font-bold block mt-0.5">
+                    de soutien bénévole effectif auprès d'élèves comoriens
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed max-w-lg mx-auto">
+                  Compétences développées : Pédagogie différenciée, communication bienveillante, méthodologie de révision et respect du cadre de protection des mineurs.
+                </p>
+              </div>
+
+              {/* Signatures */}
+              <div className="grid grid-cols-2 gap-8 border-t border-slate-100 pt-6 text-xs text-slate-600">
+                <div className="space-y-1">
+                  <span className="font-bold text-slate-800 block">Le Bénévole Mentor</span>
+                  <p className="italic text-slate-500">{user?.first_name} {user?.last_name}</p>
+                  <p className="text-[10px] text-slate-400">Signature électronique vérifiée</p>
+                </div>
+                <div className="space-y-1 text-right">
+                  <span className="font-bold text-slate-800 block">La Coordination Pédagogique</span>
+                  <p className="text-brand-teal font-extrabold">Solidarité Éducative</p>
+                  <p className="text-[10px] text-slate-400">Cachet & Signature numérique officielle</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 1 : SAISIE DU COMPTE RENDU (F08)                         */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {reportingSession && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5 animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold text-brand-teal uppercase tracking-wider">
+                  Compte rendu post-séance (F08)
+                </span>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  {reportingSession.title}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Élève : {reportingSession.pairing_details?.student_details?.first_name} ({reportingSession.pairing_details?.student_details?.anonymous_code})
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReportingSession(null)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleReportSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Présence de l'élève
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Présence de l'élève *
                   </label>
                   <select
                     value={reportForm.attendance}
-                    onChange={(e) => setReportForm({ ...reportForm, attendance: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none"
+                    onChange={(e) => setReportForm({ ...reportForm, attendance: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:outline-none"
                   >
                     <option value="PRESENT">Élève présent(e)</option>
                     <option value="ABSENT_JUSTIFIED">Absent(e) excusé(e)</option>
@@ -329,87 +1414,101 @@ export const VolunteerDashboard: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Durée effective (min)
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Durée effective (minutes)
                   </label>
                   <input
                     type="number"
+                    min={15}
+                    max={240}
                     value={reportForm.duration_actual_minutes}
-                    onChange={(e) => setReportForm({ ...reportForm, duration_actual_minutes: parseInt(e.target.value) })}
-                    className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                    onChange={(e) => setReportForm({ ...reportForm, duration_actual_minutes: parseInt(e.target.value) || 90 })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-700 mb-1">
+                  Niveau d'assimilation observé *
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { lvl: 1, label: '1 - Blocages persistants' },
+                    { lvl: 2, label: '2 - Assimilation partielle' },
+                    { lvl: 3, label: '3 - Bonne compréhension' },
+                    { lvl: 4, label: '4 - Très bonne maîtrise' },
+                  ].map((item) => (
+                    <button
+                      key={item.lvl}
+                      type="button"
+                      onClick={() => setReportForm({ ...reportForm, understanding_level: item.lvl })}
+                      className={`p-2.5 rounded-xl border text-left font-bold text-[11px] transition-all ${
+                        reportForm.understanding_level === item.lvl
+                          ? 'bg-brand-blue text-white border-brand-blue shadow-2xs'
+                          : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
                   Notions et chapitres travaillés *
                 </label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="Ex: Théorème de Pythagore, factorisation..."
+                  placeholder="Ex : Révision du théorème de Pythagore, factorisation d'expressions, exercices types Brevet..."
                   value={reportForm.topics_covered}
                   onChange={(e) => setReportForm({ ...reportForm, topics_covered: e.target.value })}
-                  className="w-full text-xs sm:text-sm p-2.5 border border-slate-200 rounded-xl focus:outline-none"
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Exercices réalisés
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Exercices 4, 5 et 8 du manuel..."
-                  value={reportForm.exercises_done}
-                  onChange={(e) => setReportForm({ ...reportForm, exercises_done: e.target.value })}
-                  className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                  className="w-full p-2.5 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Niveau d'assimilation observé
+                <label className="block font-bold text-slate-700 mb-1">
+                  Exercices et méthodes abordés (optionnel)
                 </label>
-                <select
-                  value={reportForm.understanding_level}
-                  onChange={(e) => setReportForm({ ...reportForm, understanding_level: parseInt(e.target.value) })}
-                  className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none"
-                >
-                  <option value={1}>1 - Difficultés majeures persistantes</option>
-                  <option value={2}>2 - Assimilation partielle</option>
-                  <option value={3}>3 - Bon niveau de compréhension</option>
-                  <option value={4}>4 - Très bonne maîtrise des notions</option>
-                </select>
+                <input
+                  type="text"
+                  placeholder="Ex : Exercices 4, 5 et 8 page 112 du manuel..."
+                  value={reportForm.exercises_done}
+                  onChange={(e) => setReportForm({ ...reportForm, exercises_done: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none"
+                />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Points de blocage / Prochaines étapes
+                <label className="block font-bold text-slate-700 mb-1">
+                  Points à revoir / Prochaine séance
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Ce qu'il faudra revoir ou continuer lors de la prochaine séance..."
+                  placeholder="Ce qu'il faudra approfondir ou continuer lors de la prochaine séance..."
                   value={reportForm.next_steps}
                   onChange={(e) => setReportForm({ ...reportForm, next_steps: e.target.value })}
-                  className="w-full text-xs sm:text-sm p-2.5 border border-slate-200 rounded-xl focus:outline-none"
-                ></textarea>
+                  className="w-full p-2.5 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none resize-none"
+                />
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setReportingSession(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="px-4 py-2 rounded-xl border border-slate-200 font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow"
+                  disabled={submittingReport}
+                  className="px-5 py-2 rounded-xl bg-brand-teal text-white font-bold hover:bg-teal-700 shadow-sm transition-all disabled:opacity-50"
                 >
-                  Valider le compte rendu
+                  {submittingReport ? 'Enregistrement…' : 'Valider le compte rendu'}
                 </button>
               </div>
             </form>
@@ -417,93 +1516,210 @@ export const VolunteerDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL 2 : Planifier Séance (F07) */}
-      {showScheduleModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-xl space-y-5">
-            <div>
-              <span className="text-xs font-bold text-brand-teal uppercase tracking-wide">
-                Planification (F07)
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                Programmer une séance de tutorat
-              </h3>
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 2 : CONSULTATION DU COMPTE RENDU                         */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {viewingReportSession && viewingReportSession.report && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-4 text-xs animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold text-brand-teal uppercase tracking-wider">
+                  Bilan validé
+                </span>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  {viewingReportSession.title}
+                </h3>
+                <p className="text-slate-500">
+                  Élève : {viewingReportSession.pairing_details?.student_details?.first_name}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewingReportSession(null)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <form onSubmit={handleScheduleSubmit} className="space-y-4">
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Présence</span>
+                  <span className="font-bold text-slate-800">
+                    {viewingReportSession.report.attendance_display || viewingReportSession.report.attendance}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Durée</span>
+                  <span className="font-bold text-slate-800">
+                    {viewingReportSession.report.duration_actual_minutes} minutes
+                  </span>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Binôme concerné</label>
+                <span className="font-bold text-slate-700 block mb-1">Niveau d'assimilation :</span>
+                <span className="px-3 py-1 rounded-xl bg-teal-50 text-brand-teal font-extrabold border border-teal-200 inline-block">
+                  Niveau {viewingReportSession.report.understanding_level} / 4
+                </span>
+              </div>
+
+              <div>
+                <span className="font-bold text-slate-700 block mb-1">Notions travaillées :</span>
+                <p className="p-3 rounded-xl bg-slate-50 text-slate-800 leading-relaxed border border-slate-100">
+                  {viewingReportSession.report.topics_covered}
+                </p>
+              </div>
+
+              {viewingReportSession.report.exercises_done && (
+                <div>
+                  <span className="font-bold text-slate-700 block mb-1">Exercices abordés :</span>
+                  <p className="p-3 rounded-xl bg-slate-50 text-slate-800 leading-relaxed border border-slate-100">
+                    {viewingReportSession.report.exercises_done}
+                  </p>
+                </div>
+              )}
+
+              {viewingReportSession.report.next_steps && (
+                <div>
+                  <span className="font-bold text-slate-700 block mb-1">Prochaines étapes recommandées :</span>
+                  <p className="p-3 rounded-xl bg-slate-50 text-slate-800 leading-relaxed border border-slate-100">
+                    {viewingReportSession.report.next_steps}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 text-right">
+              <button
+                type="button"
+                onClick={() => setViewingReportSession(null)}
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 3 : PLANIFIER UNE SÉANCE (F07)                           */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold text-brand-teal uppercase tracking-wider">
+                  Planification de cours (F07)
+                </span>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Programmer une séance de tutorat
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowScheduleModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleScheduleSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Élève concerné *</label>
                 <select
                   value={scheduleForm.pairing_id}
                   onChange={(e) => setScheduleForm({ ...scheduleForm, pairing_id: parseInt(e.target.value) })}
-                  className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:outline-none"
                 >
                   {pairings.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.student_details?.first_name} ({p.subject_details?.name})
+                      {p.student_details?.first_name} {p.student_details?.last_name_initial} — {p.subject_details?.name} ({p.student_details?.grade})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Titre / Objectif prévu *</label>
+                <label className="block font-bold text-slate-700 mb-1">Titre / Objectif prévu *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Séance 3 - Calcul d'aires et révisions"
+                  placeholder="Ex : Révision contrôle de mathématiques, factorisation et problèmes"
                   value={scheduleForm.title}
                   onChange={(e) => setScheduleForm({ ...scheduleForm, title: e.target.value })}
-                  className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Date et Heure *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Date et Heure *</label>
                   <input
                     type="datetime-local"
                     required
                     value={scheduleForm.scheduled_at}
                     onChange={(e) => setScheduleForm({ ...scheduleForm, scheduled_at: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Durée (minutes)</label>
-                  <input
-                    type="number"
+                  <label className="block font-bold text-slate-700 mb-1">Durée prévue</label>
+                  <select
                     value={scheduleForm.duration_minutes}
                     onChange={(e) => setScheduleForm({ ...scheduleForm, duration_minutes: parseInt(e.target.value) })}
-                    className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
-                  />
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:outline-none"
+                  >
+                    <option value={60}>1 heure (60 min)</option>
+                    <option value={90}>1h30 (90 min) - Recommandé</option>
+                    <option value={120}>2 heures (120 min)</option>
+                  </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Lieu ou Moyen de connexion</label>
-                <input
-                  type="text"
-                  placeholder="Ex: Appel WhatsApp, Google Meet, ou Bibliothèque"
-                  value={scheduleForm.location_or_link}
-                  onChange={(e) => setScheduleForm({ ...scheduleForm, location_or_link: e.target.value })}
-                  className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:outline-none"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Format</label>
+                  <select
+                    value={scheduleForm.mode}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, mode: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:outline-none"
+                  >
+                    <option value="REMOTE">À distance (visio / appel)</option>
+                    <option value="IN_PERSON">En présentiel</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Lieu ou Moyen</label>
+                  <input
+                    type="text"
+                    placeholder="Ex : Appel WhatsApp, Google Meet, ou Bibliothèque"
+                    value={scheduleForm.location_or_link}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, location_or_link: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowScheduleModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="px-4 py-2 rounded-xl border border-slate-200 font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-teal text-white text-xs font-bold hover:bg-teal-700 shadow"
+                  disabled={submittingSchedule}
+                  className="px-5 py-2 rounded-xl bg-brand-teal text-white font-bold hover:bg-teal-700 shadow-sm transition-all disabled:opacity-50"
                 >
-                  Enregistrer la séance
+                  {submittingSchedule ? 'Planification…' : 'Enregistrer la séance'}
                 </button>
               </div>
             </form>
@@ -511,7 +1727,68 @@ export const VolunteerDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL 3 : Carnet de liaison encadré (F11) */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 4 : ANNULER / REPORTER UNE SÉANCE                        */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {cancellingSession && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 text-xs animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-extrabold text-slate-900">
+                Modifier ou annuler la séance
+              </h3>
+              <button
+                type="button"
+                onClick={() => setCancellingSession(null)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-slate-600 leading-relaxed">
+              Vous vous apprêtez à marquer la séance <strong>« {cancellingSession.title} »</strong> comme annulée ou reportée.
+            </p>
+
+            <form onSubmit={handleCancelSessionSubmit} className="space-y-4">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Motif d'annulation ou de report *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Ex : Coupure d'électricité, empêchement de l'élève, séance décalée à samedi..."
+                  value={cancellationReason}
+                  onChange={(e) => setCancellationReason(e.target.value)}
+                  className="w-full p-3 border border-slate-200 rounded-xl focus:border-brand-teal focus:outline-none resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setCancellingSession(null)}
+                  className="px-4 py-2 rounded-xl border border-slate-200 font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Fermer
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingCancel}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold transition-all disabled:opacity-50"
+                >
+                  {submittingCancel ? 'Mise à jour…' : 'Confirmer l’annulation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 5 : CARNET DE LIAISON (F11)                              */}
+      {/* ══════════════════════════════════════════════════════════════ */}
       {selectedPairingForNotes && (
         <LiaisonNotebookModal
           isOpen={true}
@@ -520,7 +1797,9 @@ export const VolunteerDashboard: React.FC = () => {
         />
       )}
 
-      {/* MODAL 4 : Objectifs pédagogiques (F09) */}
+      {/* ══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 6 : OBJECTIFS PÉDAGOGIQUES (F09)                         */}
+      {/* ══════════════════════════════════════════════════════════════ */}
       {selectedPairingForObjectives && (
         <LearningObjectivesModal
           isOpen={true}
@@ -536,3 +1815,5 @@ export const VolunteerDashboard: React.FC = () => {
     </div>
   );
 };
+
+export default VolunteerDashboard;
