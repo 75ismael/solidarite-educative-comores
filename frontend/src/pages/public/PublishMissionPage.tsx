@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient, extractResults, formatApiError } from '../../api/client';
-import { Subject } from '../../types';
+import { Subject, DEFAULT_SUBJECTS } from '../../types';
 import {
   Building2,
   User,
@@ -215,20 +215,30 @@ export const PublishMissionPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>(DEFAULT_SUBJECTS);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
   const [createdId, setCreatedId] = useState<number | null>(null);
 
   useEffect(() => {
-    apiClient.get('/pedagogy/subjects/').then(res => {
-      const list = extractResults<Subject>(res.data);
-      setSubjects(list);
-      if (list.length > 0 && !form.subject) {
-        setForm(f => ({ ...f, subject: list[0].id }));
-      }
-    }).catch(() => {});
+    apiClient
+      .get('/pedagogy/subjects/')
+      .then((res) => {
+        const list = extractResults<Subject>(res.data);
+        if (list && list.length > 0) {
+          setSubjects((prev) => {
+            const map = new Map<number, Subject>();
+            prev.forEach((s) => map.set(s.id, s));
+            list.forEach((s) => map.set(s.id, s));
+            return Array.from(map.values());
+          });
+          if (!form.subject) {
+            setForm((f) => ({ ...f, subject: list[0].id }));
+          }
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const set = (field: string, value: unknown) =>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiClient } from '../../api/client';
 import { BookOpen, Lock, Mail, AlertCircle, ArrowRight, UserCheck } from 'lucide-react';
@@ -7,6 +7,8 @@ import { BookOpen, Lock, Mail, AlertCircle, ArrowRight, UserCheck } from 'lucide
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +23,7 @@ export const LoginPage: React.FC = () => {
     try {
       const res = await apiClient.post('/auth/login/', { email, password });
       login(res.data);
-      navigate('/dashboard');
+      navigate(redirectUrl);
     } catch (err: any) {
       setErrorMsg(
         err.response?.data?.detail ||

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient, extractResults, formatApiError } from '../../api/client';
-import { Subject } from '../../types';
+import { Subject, DEFAULT_SUBJECTS } from '../../types';
 import {
   BookOpen,
   ShieldCheck,
@@ -59,7 +59,7 @@ export const RequestSupportPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>(DEFAULT_SUBJECTS);
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
@@ -89,10 +89,22 @@ export const RequestSupportPage: React.FC = () => {
   });
 
   useEffect(() => {
-    apiClient.get('/pedagogy/subjects/').then((res) => {
-      const list = extractResults<Subject>(res.data);
-      setSubjects(list);
-    });
+    apiClient
+      .get('/pedagogy/subjects/')
+      .then((res) => {
+        const list = extractResults<Subject>(res.data);
+        if (list && list.length > 0) {
+          setSubjects((prev) => {
+            const map = new Map<number, Subject>();
+            prev.forEach((s) => map.set(s.id, s));
+            list.forEach((s) => map.set(s.id, s));
+            return Array.from(map.values());
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn('Impossible de charger les matières distantes, maintien des matières par défaut', err);
+      });
 
     if (user) {
       setForm((prev) => ({

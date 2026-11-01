@@ -35,6 +35,16 @@ export interface Subject {
   is_active: boolean;
 }
 
+export const DEFAULT_SUBJECTS: Subject[] = [
+  { id: 1, name: 'Mathématiques', category: 'Sciences', is_active: true },
+  { id: 2, name: 'Français', category: 'Lettres', is_active: true },
+  { id: 3, name: 'Sciences & SVT', category: 'Sciences', is_active: true },
+  { id: 4, name: 'Physique-Chimie', category: 'Sciences', is_active: true },
+  { id: 5, name: 'Histoire-Géographie', category: 'Humanités', is_active: true },
+  { id: 6, name: 'Anglais', category: 'Langues', is_active: true },
+  { id: 7, name: 'Arabe', category: 'Langues', is_active: true },
+];
+
 export interface Student {
   id: number;
   anonymous_code: string;
