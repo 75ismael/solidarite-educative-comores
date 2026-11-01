@@ -239,7 +239,7 @@ export const CoordinatorDashboard: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-20 text-sm text-slate-500">Chargement du tableau de bord...</div>;
+    return <div className="text-center py-20 text-sm text-slate-400">Chargement du tableau de bord...</div>;
   }
 
   const getPairingForRequest = (req: SupportRequest): Pairing | undefined => {
@@ -377,7 +377,7 @@ export const CoordinatorDashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* 1. Header with Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#281F4B] pb-6">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-brand-teal">
             Espace Coordination & Pilotage
@@ -385,7 +385,7 @@ export const CoordinatorDashboard: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-blue">
             Tableau de bord opérationnel
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Supervisez les demandes d'élèves, validez les tuteurs et pilotez les binômes actifs.
           </p>
         </div>
@@ -405,11 +405,11 @@ export const CoordinatorDashboard: React.FC = () => {
           onClick={() => setActiveTab('requests')}
           className={`p-5 rounded-2xl border text-left transition-all ${
             activeTab === 'requests'
-              ? 'bg-blue-50/50 border-brand-blue ring-2 ring-brand-blue/20'
-              : 'bg-white border-slate-200 hover:border-slate-300'
+              ? 'bg-blue-950/40 border-brand-blue ring-2 ring-brand-blue/20'
+              : 'bg-[#0B0817] border-[#281F4B] hover:border-[#3d2f6b]'
           }`}
         >
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide block">
             Demandes totales
           </span>
           <div className="text-3xl font-extrabold text-brand-blue mt-1">{requests.length}</div>
@@ -422,11 +422,11 @@ export const CoordinatorDashboard: React.FC = () => {
           onClick={() => setActiveTab('volunteers')}
           className={`p-5 rounded-2xl border text-left transition-all ${
             activeTab === 'volunteers'
-              ? 'bg-teal-50/50 border-brand-teal ring-2 ring-brand-teal/20'
-              : 'bg-white border-slate-200 hover:border-slate-300'
+              ? 'bg-teal-950/40 border-brand-teal ring-2 ring-brand-teal/20'
+              : 'bg-[#0B0817] border-[#281F4B] hover:border-[#3d2f6b]'
           }`}
         >
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide block">
             Bénévoles inscrits
           </span>
           <div className="text-3xl font-extrabold text-brand-teal mt-1">{volunteerProfiles.length}</div>
@@ -439,28 +439,28 @@ export const CoordinatorDashboard: React.FC = () => {
           onClick={() => setActiveTab('pairings')}
           className={`p-5 rounded-2xl border text-left transition-all ${
             activeTab === 'pairings'
-              ? 'bg-teal-50/50 border-teal-600 ring-2 ring-teal-600/20'
-              : 'bg-white border-slate-200 hover:border-slate-300'
+              ? 'bg-teal-950/40 border-teal-600 ring-2 ring-teal-600/20'
+              : 'bg-[#0B0817] border-[#281F4B] hover:border-[#3d2f6b]'
           }`}
         >
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide block">
             Binômes actifs
           </span>
-          <div className="text-3xl font-extrabold text-teal-800 mt-1">
+          <div className="text-3xl font-extrabold text-teal-400 mt-1">
             {pairings.filter((p) => p.status === 'ACTIVE').length}
           </div>
-          <span className="text-xs text-slate-500 block mt-1">Accompagnements en cours</span>
+          <span className="text-xs text-slate-400 block mt-1">Accompagnements en cours</span>
         </button>
 
         <button
           onClick={() => setActiveTab('alerts')}
           className={`p-5 rounded-2xl border text-left transition-all ${
             activeTab === 'alerts'
-              ? 'bg-rose-50/50 border-rose-500 ring-2 ring-rose-500/20'
-              : 'bg-white border-slate-200 hover:border-slate-300'
+              ? 'bg-rose-950/40 border-rose-500 ring-2 ring-rose-500/20'
+              : 'bg-[#0B0817] border-[#281F4B] hover:border-[#3d2f6b]'
           }`}
         >
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide block">
             Alertes opérationnelles
           </span>
           <div className="text-3xl font-extrabold text-rose-600 mt-1">{activeAlerts.length}</div>
@@ -471,13 +471,13 @@ export const CoordinatorDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 overflow-x-auto gap-2">
+      <div className="flex border-b border-[#281F4B] overflow-x-auto gap-2">
         <button
           onClick={() => setActiveTab('requests')}
           className={`py-3 px-4 font-bold text-xs sm:text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${
             activeTab === 'requests'
               ? 'border-brand-teal text-brand-teal'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -494,7 +494,7 @@ export const CoordinatorDashboard: React.FC = () => {
           className={`py-3 px-4 font-bold text-xs sm:text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${
             activeTab === 'volunteers'
               ? 'border-brand-teal text-brand-teal'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -511,7 +511,7 @@ export const CoordinatorDashboard: React.FC = () => {
           className={`py-3 px-4 font-bold text-xs sm:text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${
             activeTab === 'pairings'
               ? 'border-brand-teal text-brand-teal'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
           <HeartHandshake className="w-4 h-4" />
@@ -523,7 +523,7 @@ export const CoordinatorDashboard: React.FC = () => {
           className={`py-3 px-4 font-bold text-xs sm:text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${
             activeTab === 'alerts'
               ? 'border-brand-teal text-brand-teal'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
           <AlertTriangle className="w-4 h-4" />
@@ -537,24 +537,24 @@ export const CoordinatorDashboard: React.FC = () => {
           {/* Header & Section Title */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-brand-teal" />
                 Supervision des élèves & Demandes de tutorat
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5">
                 Suivez en temps réel les élèves avec tuteur, les élèves en attente et les demandes de réattribution.
               </p>
             </div>
           </div>
 
           {/* Segmented Status Pills */}
-          <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-2xl w-fit">
+          <div className="flex flex-wrap gap-2 p-1.5 bg-[#1a1528] rounded-2xl w-fit">
             <button
               onClick={() => setRequestFilterTab('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 requestFilterTab === 'all'
                   ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               Toutes les demandes ({requests.length})
@@ -563,8 +563,8 @@ export const CoordinatorDashboard: React.FC = () => {
               onClick={() => setRequestFilterTab('unmatched')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 requestFilterTab === 'unmatched'
-                  ? 'bg-white text-amber-900 shadow-xs ring-1 ring-amber-300'
-                  : 'text-slate-600 hover:text-amber-800'
+                  ? 'bg-amber-900/30 text-amber-300 shadow-xs ring-1 ring-amber-500'
+                  : 'text-slate-300 hover:text-amber-400'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -574,8 +574,8 @@ export const CoordinatorDashboard: React.FC = () => {
               onClick={() => setRequestFilterTab('matched')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 requestFilterTab === 'matched'
-                  ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-emerald-300'
-                  : 'text-slate-600 hover:text-emerald-800'
+                  ? 'bg-emerald-900/30 text-emerald-300 shadow-xs ring-1 ring-emerald-500'
+                  : 'text-slate-300 hover:text-emerald-400'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -585,8 +585,8 @@ export const CoordinatorDashboard: React.FC = () => {
               onClick={() => setRequestFilterTab('reassignment')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 requestFilterTab === 'reassignment'
-                  ? 'bg-rose-50 text-rose-900 shadow-xs ring-1 ring-rose-400'
-                  : 'text-rose-700 hover:text-rose-900'
+                  ? 'bg-rose-900/30 text-rose-300 shadow-xs ring-1 ring-rose-500'
+                  : 'text-rose-400 hover:text-rose-300'
               }`}
             >
               <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
@@ -595,7 +595,7 @@ export const CoordinatorDashboard: React.FC = () => {
           </div>
 
           {/* Search & Multi-Filters Toolbar */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+          <div className="bg-[#0B0817] p-4 rounded-2xl border border-[#281F4B] shadow-2xs space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Search */}
               <div className="relative">
@@ -605,7 +605,7 @@ export const CoordinatorDashboard: React.FC = () => {
                   placeholder="Code élève, prénom, ville..."
                   value={requestSearch}
                   onChange={(e) => setRequestSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
                 />
               </div>
 
@@ -613,7 +613,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={requestSubjectFilter}
                 onChange={(e) => setRequestSubjectFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Toutes les matières</option>
                 {subjects.map((s) => (
@@ -627,7 +627,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={requestIslandFilter}
                 onChange={(e) => setRequestIslandFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Toutes les îles</option>
                 <option value="NGAZIDJA">Grande Comore (Ngazidja)</option>
@@ -640,7 +640,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={requestLevelFilter}
                 onChange={(e) => setRequestLevelFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Tous les niveaux scolaires</option>
                 <option value="PRIMAIRE">Primaire</option>
@@ -650,7 +650,7 @@ export const CoordinatorDashboard: React.FC = () => {
             </div>
 
             {(requestSearch || requestSubjectFilter !== 'ALL' || requestIslandFilter !== 'ALL' || requestLevelFilter !== 'ALL') && (
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <div className="flex items-center justify-between pt-2 border-t border-[#281F4B] text-xs text-slate-400">
                 <span>{filteredRequests.length} demande(s) correspondent à vos filtres</span>
                 <button
                   onClick={() => {
@@ -668,10 +668,10 @@ export const CoordinatorDashboard: React.FC = () => {
           </div>
 
           {/* Table / List */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-[#281F4B] w-full overflow-x-auto shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
+                <thead className="bg-white text-slate-900 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">Élève & Code</th>
                     <th className="py-3 px-4">Niveau / Classe</th>
@@ -829,18 +829,18 @@ export const CoordinatorDashboard: React.FC = () => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <Users className="w-5 h-5 text-brand-teal" />
                 Vivier des Bénévoles & Cartographie des Compétences ({volunteerProfiles.length})
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5">
                 Consultez l'ensemble des bénévoles, filtrez selon les disciplines enseignées, créneaux disponibles, villes et charge d'attribution.
               </p>
             </div>
           </div>
 
           {/* Search & Multi-Filters Toolbar for Volunteers */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+          <div className="bg-[#0B0817] p-4 rounded-2xl border border-[#281F4B] shadow-2xs space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {/* Search volunteer */}
               <div className="relative">
@@ -850,7 +850,7 @@ export const CoordinatorDashboard: React.FC = () => {
                   placeholder="Nom, email, ville, études/profession..."
                   value={volunteerSearch}
                   onChange={(e) => setVolunteerSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
                 />
               </div>
 
@@ -858,7 +858,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={volunteerSubjectFilter}
                 onChange={(e) => setVolunteerSubjectFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Toutes les matières enseignées</option>
                 {subjects.map((s) => (
@@ -872,7 +872,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={volunteerLevelFilter}
                 onChange={(e) => setVolunteerLevelFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Tous les niveaux d'enseignement</option>
                 <option value="PRIMAIRE">Primaire</option>
@@ -885,7 +885,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={volunteerIslandFilter}
                 onChange={(e) => setVolunteerIslandFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Toutes les îles / localisations</option>
                 <option value="NGAZIDJA">Grande Comore (Ngazidja)</option>
@@ -898,7 +898,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={volunteerAvailabilityFilter}
                 onChange={(e) => setVolunteerAvailabilityFilter(e.target.value as any)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Toutes les disponibilités d'affectation</option>
                 <option value="AVAILABLE">Disponible immédiatement (0 binôme actif)</option>
@@ -909,7 +909,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <select
                 value={volunteerStatusFilter}
                 onChange={(e) => setVolunteerStatusFilter(e.target.value as any)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
               >
                 <option value="ALL">Tous les statuts de vérification</option>
                 <option value="VERIFIED">Profils vérifiés uniquement</option>
@@ -919,7 +919,7 @@ export const CoordinatorDashboard: React.FC = () => {
             </div>
 
             {(volunteerSearch || volunteerSubjectFilter !== 'ALL' || volunteerLevelFilter !== 'ALL' || volunteerIslandFilter !== 'ALL' || volunteerAvailabilityFilter !== 'ALL' || volunteerStatusFilter !== 'ALL') && (
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <div className="flex items-center justify-between pt-2 border-t border-[#281F4B] text-xs text-slate-400">
                 <span>{filteredVolunteers.length} bénévole(s) correspondent à vos critères</span>
                 <button
                   onClick={() => {
@@ -941,7 +941,7 @@ export const CoordinatorDashboard: React.FC = () => {
           {/* Volunteers Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredVolunteers.length === 0 ? (
-              <div className="col-span-full py-12 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200">
+              <div className="col-span-full py-12 text-center text-xs text-slate-400 bg-[#0B0817] rounded-2xl border border-[#281F4B]">
                 Aucun bénévole ne correspond aux filtres de recherche.
               </div>
             ) : (
@@ -952,15 +952,15 @@ export const CoordinatorDashboard: React.FC = () => {
                 return (
                   <div
                     key={p.id}
-                    className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 hover:shadow-md transition-shadow"
+                    className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-6 shadow-sm space-y-4 hover:shadow-md transition-shadow"
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h3 className="font-extrabold text-base text-slate-900">
+                        <h3 className="font-extrabold text-base text-white">
                           {p.user_details?.first_name} {p.user_details?.last_name}
                         </h3>
-                        <p className="text-xs text-slate-500">{p.user_details?.email}</p>
+                        <p className="text-xs text-slate-400">{p.user_details?.email}</p>
                       </div>
 
                       <div className="flex flex-col items-end gap-1.5">
@@ -1001,7 +1001,7 @@ export const CoordinatorDashboard: React.FC = () => {
                         <strong>Élève(s) en accompagnement :</strong>
                         <div className="flex flex-wrap gap-1.5 pt-0.5">
                           {activePairings.map((ap) => (
-                            <span key={ap.id} className="font-mono font-bold bg-white px-2 py-0.5 rounded border border-blue-200 text-blue-800">
+                            <span key={ap.id} className="font-mono font-bold bg-[#0B0817] px-2 py-0.5 rounded border border-blue-200 text-blue-800">
                               {ap.student_details?.anonymous_code} ({ap.subject_details?.name})
                             </span>
                           ))}
@@ -1010,7 +1010,7 @@ export const CoordinatorDashboard: React.FC = () => {
                     )}
 
                     {/* Volunteer details: Competencies & Dispos */}
-                    <div className="space-y-2.5 text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="space-y-2.5 text-xs text-slate-300 bg-[#160F2B] p-4 rounded-xl border border-[#281F4B]">
                       <div className="flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>
@@ -1031,7 +1031,7 @@ export const CoordinatorDashboard: React.FC = () => {
                               </span>
                             ))
                           ) : (
-                            <span className="text-slate-500 italic">Toutes matières</span>
+                            <span className="text-slate-400 italic">Toutes matières</span>
                           )}
                         </div>
                       </div>
@@ -1060,14 +1060,14 @@ export const CoordinatorDashboard: React.FC = () => {
                       )}
 
                       {p.experience && (
-                        <div className="pt-1 text-slate-500 italic border-t border-slate-200/60">
+                        <div className="pt-1 text-slate-400 italic border-t border-[#281F4B]/60">
                           « {p.experience} »
                         </div>
                       )}
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#281F4B] text-xs">
                       <div className="flex items-center gap-1.5 text-teal-700 font-semibold">
                         <ShieldCheck className="w-4 h-4" />
                         <span>Charte éthique signée</span>
@@ -1104,16 +1104,16 @@ export const CoordinatorDashboard: React.FC = () => {
       {activeTab === 'pairings' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <HeartHandshake className="w-5 h-5 text-brand-teal" />
               Binômes d'accompagnement en cours ({pairings.length})
             </h2>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-[#281F4B] w-full overflow-x-auto shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
+                <thead className="bg-white text-slate-900 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">Code Élève</th>
                     <th className="py-3 px-4">Tuteur Bénévole</th>
@@ -1219,14 +1219,14 @@ export const CoordinatorDashboard: React.FC = () => {
       {/* TAB 4: Alertes de suivi (F10) */}
       {activeTab === 'alerts' && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-rose-500" />
             Alertes opérationnelles & Rappels ({activeAlerts.length} actives)
           </h2>
 
           <div className="space-y-3">
             {alerts.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-xs text-slate-500">
+              <div className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-8 text-center text-xs text-slate-400">
                 Aucune alerte opérationnelle signalée.
               </div>
             ) : (
@@ -1235,8 +1235,8 @@ export const CoordinatorDashboard: React.FC = () => {
                   key={alt.id}
                   className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                     alt.is_resolved
-                      ? 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
-                      : 'bg-rose-50/60 border-rose-200 text-slate-800'
+                      ? 'bg-[#160F2B] border-[#281F4B] text-slate-500 opacity-60'
+                      : 'bg-rose-950/40 border-rose-800 text-slate-200'
                   }`}
                 >
                   <div>
@@ -1244,15 +1244,15 @@ export const CoordinatorDashboard: React.FC = () => {
                       <span className="text-xs font-bold text-rose-700 uppercase tracking-wide">
                         {alt.severity_display}
                       </span>
-                      <h3 className="font-bold text-sm text-slate-900">{alt.title}</h3>
+                      <h3 className="font-bold text-sm text-white">{alt.title}</h3>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1">{alt.description}</p>
+                    <p className="text-xs text-slate-300 mt-1">{alt.description}</p>
                   </div>
 
                   {!alt.is_resolved && (
                     <button
                       onClick={() => resolveAlert(alt.id)}
-                      className="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-white border border-rose-300 text-rose-700 hover:bg-rose-100 text-xs font-semibold shadow-sm transition-colors"
+                      className="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-[#0B0817] border border-rose-300 text-rose-700 hover:bg-rose-100 text-xs font-semibold shadow-sm transition-colors"
                     >
                       Marquer comme résolue
                     </button>
@@ -1267,24 +1267,24 @@ export const CoordinatorDashboard: React.FC = () => {
       {/* MODAL 1 : Moteur de Correspondance & Attribution (F06) */}
       {activeRequest && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div className="bg-[#0B0817] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-start justify-between border-b border-[#281F4B] pb-4">
               <div>
                 <span className="text-xs font-bold text-brand-teal uppercase tracking-wide flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4" /> Moteur de correspondance intelligente (F06)
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mt-1">
+                <h3 className="text-xl font-bold text-white mt-1">
                   Attribuer un bénévole à {activeRequest.student_details?.first_name} (
                   <span className="font-mono">{activeRequest.student_details?.anonymous_code}</span>)
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Matière : {activeRequest.subjects_details?.map((s) => s.name).join(', ')} • {activeRequest.student_details?.grade} ({activeRequest.student_details?.city})
                 </p>
               </div>
 
               <button
                 onClick={() => setActiveRequest(null)}
-                className="text-slate-400 hover:text-slate-600 p-1 font-bold text-sm"
+                className="text-slate-400 hover:text-slate-300 p-1 font-bold text-sm"
               >
                 ✕
               </button>
@@ -1305,15 +1305,15 @@ export const CoordinatorDashboard: React.FC = () => {
                 </button>
               </div>
             ) : loadingSuggestions ? (
-              <div className="text-center py-12 text-sm text-slate-500">
+              <div className="text-center py-12 text-sm text-slate-400">
                 Calcul des correspondances d'affinité en cours...
               </div>
             ) : suggestions.length === 0 ? (
               <div className="text-center py-8 space-y-3">
-                <p className="text-sm font-semibold text-slate-700">
+                <p className="text-sm font-semibold text-slate-300">
                   Aucun bénévole disponible ne correspond actuellement à tous les critères.
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-400">
                   Vous pouvez publier une mission d'appel au bénévolat sur le site public pour susciter de nouvelles candidatures.
                 </p>
                 <button
@@ -1329,7 +1329,7 @@ export const CoordinatorDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-wide">
                   Candidats recommandés par score d'adéquation :
                 </span>
 
@@ -1337,17 +1337,17 @@ export const CoordinatorDashboard: React.FC = () => {
                   {suggestions.map((sug) => (
                     <div
                       key={sug.volunteer_id}
-                      className="p-4 rounded-2xl border border-slate-200 hover:border-brand-teal bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
+                      className="p-4 rounded-2xl border border-[#281F4B] hover:border-brand-teal bg-[#160F2B]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 text-sm">{sug.volunteer_name}</h4>
+                          <h4 className="font-bold text-white text-sm">{sug.volunteer_name}</h4>
                           <span className="px-2 py-0.5 rounded bg-teal-100 text-brand-teal text-[11px] font-bold">
                             Score : {sug.score}/100
                           </span>
                         </div>
 
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-slate-400">
                           {sug.island} • Dispos : {sug.availabilities || 'Non renseigné'}
                         </div>
 
@@ -1355,7 +1355,7 @@ export const CoordinatorDashboard: React.FC = () => {
                           {sug.reasons.map((r, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-[10px] text-slate-600 font-medium"
+                              className="px-2 py-0.5 rounded-full bg-[#0B0817] border border-[#281F4B] text-[10px] text-slate-300 font-medium"
                             >
                               ✓ {r}
                             </span>
@@ -1381,23 +1381,23 @@ export const CoordinatorDashboard: React.FC = () => {
       {/* MODAL 2 : Publier un appel au bénévolat (F04) */}
       {showMissionModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-5">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div className="bg-[#0B0817] rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between border-b border-[#281F4B] pb-4">
               <div>
                 <span className="text-xs font-bold text-brand-teal uppercase tracking-wide">
                   Diffusion Publique (F04)
                 </span>
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="text-xl font-bold text-white">
                   Publier une nouvelle mission bénévole
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-400 mt-0.5">
                   L'appel sera visible sur la page publique « Missions » sans divulguer de données personnelles.
                 </p>
               </div>
 
               <button
                 onClick={() => setShowMissionModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 font-bold text-sm"
+                className="text-slate-400 hover:text-slate-300 p-1 font-bold text-sm"
               >
                 ✕
               </button>
@@ -1405,7 +1405,7 @@ export const CoordinatorDashboard: React.FC = () => {
 
             <form onSubmit={handleCreateMissionSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-300 mb-1">
                   Titre de la mission *
                 </label>
                 <input
@@ -1414,17 +1414,17 @@ export const CoordinatorDashboard: React.FC = () => {
                   value={missionForm.title}
                   onChange={(e) => setMissionForm({ ...missionForm, title: e.target.value })}
                   placeholder="Ex: Soutien en Mathématiques - Niveau Collège (3ème)"
-                  className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                  className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-teal"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Matière *</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Matière *</label>
                   <select
                     value={missionForm.subject}
                     onChange={(e) => setMissionForm({ ...missionForm, subject: Number(e.target.value) })}
-                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none"
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none"
                   >
                     {subjects.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -1435,24 +1435,24 @@ export const CoordinatorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Niveau scolaire *</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Niveau scolaire *</label>
                   <input
                     type="text"
                     required
                     value={missionForm.school_level}
                     onChange={(e) => setMissionForm({ ...missionForm, school_level: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Île</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Île</label>
                   <select
                     value={missionForm.island}
                     onChange={(e) => setMissionForm({ ...missionForm, island: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-2.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none"
+                    className="w-full text-xs sm:text-sm px-2.5 py-2.5 rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none"
                   >
                     <option value="Grande Comore (Ngazidja)">Ngazidja</option>
                     <option value="Anjouan (Ndzuwani)">Ndzuwani</option>
@@ -1461,21 +1461,21 @@ export const CoordinatorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Ville</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Ville</label>
                   <input
                     type="text"
                     value={missionForm.city}
                     onChange={(e) => setMissionForm({ ...missionForm, city: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none"
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Format</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Format</label>
                   <select
                     value={missionForm.format}
                     onChange={(e) => setMissionForm({ ...missionForm, format: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-2.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none"
+                    className="w-full text-xs sm:text-sm px-2.5 py-2.5 rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none"
                   >
                     <option value="REMOTE">À distance</option>
                     <option value="IN_PERSON">Présentiel</option>
@@ -1485,19 +1485,19 @@ export const CoordinatorDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-300 mb-1">
                   Engagement horaire attendu
                 </label>
                 <input
                   type="text"
                   value={missionForm.expected_commitment}
                   onChange={(e) => setMissionForm({ ...missionForm, expected_commitment: e.target.value })}
-                  className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none"
+                  className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-300 mb-1">
                   Description anonymisée des besoins *
                 </label>
                 <textarea
@@ -1506,15 +1506,15 @@ export const CoordinatorDashboard: React.FC = () => {
                   value={missionForm.description}
                   onChange={(e) => setMissionForm({ ...missionForm, description: e.target.value })}
                   placeholder="Décrivez les objectifs généraux sans divulguer l'identité de l'enfant..."
-                  className="w-full text-xs sm:text-sm p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                  className="w-full text-xs sm:text-sm p-3 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-teal"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#281F4B]">
                 <button
                   type="button"
                   onClick={() => setShowMissionModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="px-4 py-2 rounded-xl border border-[#281F4B] text-xs font-semibold text-slate-300 hover:bg-[#1a1528]"
                 >
                   Annuler
                 </button>
@@ -1543,37 +1543,37 @@ export const CoordinatorDashboard: React.FC = () => {
       {/* MODAL 4 : Réassigner / Transférer le binôme à un nouveau bénévole */}
       {reassignPairing && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div className="bg-[#0B0817] rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex items-start justify-between border-b border-[#281F4B] pb-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-1">
                   <UserCheck className="w-3.5 h-3.5" /> Passation de binôme
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="text-xl font-bold text-white">
                   Réattribuer l'élève {reassignPairing.student_details?.anonymous_code}
                 </h3>
               </div>
               <button
                 onClick={() => setReassignPairing(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-300 cursor-pointer"
               >
                 <XCircle className="w-6 h-6" />
               </button>
             </div>
 
             {/* Encadré d'information sur la traçabilité */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-              <div className="flex justify-between items-center text-slate-700">
+            <div className="p-4 rounded-2xl bg-[#160F2B] border border-[#281F4B] text-xs space-y-2">
+              <div className="flex justify-between items-center text-slate-300">
                 <span>Tuteur actuel :</span>
-                <strong className="text-slate-900">
+                <strong className="text-white">
                   {reassignPairing.volunteer_details?.first_name} {reassignPairing.volunteer_details?.last_name}
                 </strong>
               </div>
-              <div className="flex justify-between items-center text-slate-700">
+              <div className="flex justify-between items-center text-slate-300">
                 <span>Matière principale :</span>
                 <strong className="text-brand-blue">{reassignPairing.subject_details?.name}</strong>
               </div>
-              <p className="text-slate-500 pt-1 border-t border-slate-200/80 leading-relaxed italic">
+              <p className="text-slate-400 pt-1 border-t border-[#281F4B]/80 leading-relaxed italic">
                 🔒 Garantie d'historique : Toutes les séances et bilans de l'ancien tuteur restent conservés dans les archives. Un nouveau binôme actif sera généré avec accès au livret de compétences de l'élève.
               </p>
             </div>
@@ -1592,14 +1592,14 @@ export const CoordinatorDashboard: React.FC = () => {
             ) : (
               <form onSubmit={handleReassignSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
                     Nouveau bénévole tuteur *
                   </label>
                   <select
                     required
                     value={reassignForm.new_volunteer_id}
                     onChange={(e) => setReassignForm({ ...reassignForm, new_volunteer_id: Number(e.target.value) })}
-                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-brand-teal"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] bg-[#0B0817] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
                   >
                     <option value="">Sélectionnez un tuteur bénévole disponible</option>
                     {volunteerProfiles
@@ -1613,7 +1613,7 @@ export const CoordinatorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
                     Motif de la réattribution *
                   </label>
                   <input
@@ -1622,12 +1622,12 @@ export const CoordinatorDashboard: React.FC = () => {
                     placeholder="Ex: Fin de disponibilité du bénévole, changement d'horaires, déménagement..."
                     value={reassignForm.reason}
                     onChange={(e) => setReassignForm({ ...reassignForm, reason: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
                     Rythme convenu pour le nouveau tuteur
                   </label>
                   <input
@@ -1635,15 +1635,15 @@ export const CoordinatorDashboard: React.FC = () => {
                     placeholder="Ex: 1 séance de 1h30 par semaine"
                     value={reassignForm.weekly_frequency}
                     onChange={(e) => setReassignForm({ ...reassignForm, weekly_frequency: e.target.value })}
-                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#281F4B] text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-teal"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-3 pt-3 border-t border-[#281F4B]">
                   <button
                     type="button"
                     onClick={() => setReassignPairing(null)}
-                    className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    className="px-4 py-2 rounded-xl border border-[#281F4B] text-xs font-semibold text-slate-300 hover:bg-[#1a1528] cursor-pointer"
                   >
                     Annuler
                   </button>

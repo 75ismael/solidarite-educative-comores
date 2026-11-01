@@ -29,10 +29,10 @@ import { SponsorLogos } from '../../components/SponsorLogos';
 
 /* ─── helpers ─── */
 const inputCls =
-  'w-full text-sm px-4 py-3 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400';
-const labelCls = 'block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide';
+  'w-full text-sm px-4 py-3 border border-[#281F4B] rounded-xl bg-[#0B0817] focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400';
+const labelCls = 'block text-xs font-bold text-slate-100 mb-1.5 uppercase tracking-wide';
 const selectCls =
-  'w-full text-sm px-4 py-3 border border-slate-200 rounded-xl bg-white focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all appearance-none';
+  'w-full text-sm px-4 py-3 border border-[#281F4B] rounded-xl bg-[#0B0817] focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all appearance-none';
 
 const STEPS = [
   { id: 1, label: 'Votre profil',   icon: User },
@@ -224,19 +224,19 @@ export const RequestSupportPage: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-brand-blue">
               Demande enregistrée !
             </h1>
-            <p className="text-slate-500 text-sm leading-relaxed">
+            <p className="text-slate-100 text-sm leading-relaxed">
               Le dossier de votre enfant a bien été transmis à notre équipe de coordination.
             </p>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="bg-[#0B0817] border border-[#281F4B] rounded-2xl p-5 space-y-2">
+            <p className="text-xs font-bold text-slate-100 uppercase tracking-wider">
               Identifiant confidentiel du dossier
             </p>
-            <p className="text-2xl font-mono font-extrabold text-brand-blue tracking-widest bg-white border border-slate-200 rounded-xl py-3 px-4">
+            <p className="text-2xl font-mono font-extrabold text-brand-blue tracking-widest bg-[#0B0817] border border-[#281F4B] rounded-xl py-3 px-4">
               {generatedCode}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-100">
               Conservez ce code. Il protège l'identité de votre enfant et permet de suivre son dossier.
             </p>
           </div>
@@ -249,7 +249,7 @@ export const RequestSupportPage: React.FC = () => {
                 'Un bénévole qualifié vous est proposé',
                 'Vous recevez les détails par email ou WhatsApp',
               ].map((t, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-slate-600">
+                <div key={i} className="flex items-center gap-2 text-xs text-slate-100">
                   <div className="w-4 h-4 rounded-full bg-brand-teal text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                     {i + 1}
                   </div>
@@ -272,13 +272,13 @@ export const RequestSupportPage: React.FC = () => {
 
   /* ── Page principale ── */
   return (
-    <div className="bg-brand-light min-h-screen">
+    <div className="bg-[#140F2D] min-h-screen">
 
       {/* ── Hero ── */}
       <div className="bg-gradient-to-br from-brand-blue via-slate-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-[#0B0817]/10 border border-white/20 flex items-center justify-center shrink-0">
               <BookOpen className="w-8 h-8 text-teal-300" />
             </div>
             <div className="space-y-2">
@@ -296,7 +296,7 @@ export const RequestSupportPage: React.FC = () => {
               <div className="pt-2">
                 <a
                   href="#temoignages"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-teal-200 hover:text-white text-xs font-semibold transition-all shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B0817]/10 hover:bg-[#0B0817]/20 border border-white/20 text-teal-200 hover:text-white text-xs font-semibold transition-all shadow-xs"
                 >
                   <Users className="w-3.5 h-3.5 text-teal-300" />
                   <span>Voir les témoignages des familles aidées ↓</span>
@@ -313,9 +313,9 @@ export const RequestSupportPage: React.FC = () => {
               { icon: Users,         label: 'Attribution',    sub: 'Bénévole qualifié' },
               { icon: CalendarDays,  label: 'Cours & Suivi',  sub: 'Séances régulières' },
             ].map((item, i) => (
-              <div key={i} className={`p-3.5 rounded-xl border ${i === 0 ? 'bg-teal-500/20 border-teal-400/40' : 'bg-white/5 border-white/10'}`}>
+              <div key={i} className={`p-3.5 rounded-xl border ${i === 0 ? 'bg-teal-500/20 border-teal-400/40' : 'bg-[#0B0817]/5 border-white/10'}`}>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-extrabold shrink-0 ${i === 0 ? 'bg-teal-400 text-white' : 'bg-white/20 text-white/70'}`}>
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-extrabold shrink-0 ${i === 0 ? 'bg-teal-400 text-white' : 'bg-[#0B0817]/20 text-white/70'}`}>
                     {i + 1}
                   </span>
                   <span className={`text-xs font-bold ${i === 0 ? 'text-teal-300' : 'text-white/80'}`}>{item.label}</span>
@@ -329,7 +329,7 @@ export const RequestSupportPage: React.FC = () => {
 
       {/* ── Stepper ── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="bg-white border-b border-slate-200 rounded-b-2xl shadow-sm px-6 py-4">
+        <div className="bg-[#140F2D] border-b border-[#281F4B] rounded-b-2xl shadow-sm px-6 py-4">
           <div className="flex items-center gap-2">
             {STEPS.map((s, i) => {
               const Icon = s.icon;
@@ -379,7 +379,7 @@ export const RequestSupportPage: React.FC = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-[#0B0817] rounded-3xl border border-[#281F4B] shadow-sm overflow-hidden">
 
           {/* ────────────────── ÉTAPE 1 : Profil parent ────────────────── */}
           {step === 1 && (
@@ -390,7 +390,7 @@ export const RequestSupportPage: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-extrabold text-slate-900">Votre profil</h2>
-                  <p className="text-xs text-slate-500">Informations du parent ou responsable légal</p>
+                  <p className="text-xs text-slate-100">Informations du parent ou responsable légal</p>
                 </div>
               </div>
 
@@ -401,7 +401,7 @@ export const RequestSupportPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-brand-blue">{user.first_name} {user.last_name}</p>
-                    <p className="text-xs text-slate-500">{user.email} · Compte connecté</p>
+                    <p className="text-xs text-slate-100">{user.email} · Compte connecté</p>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-brand-teal ml-auto shrink-0" />
                 </div>
@@ -459,7 +459,7 @@ export const RequestSupportPage: React.FC = () => {
                     <p className="text-[11px] text-slate-400 mt-1">Nous vous contacterons via ce numéro pour organiser les séances.</p>
                   </div>
 
-                  <div className="pt-2 text-center text-xs text-slate-500">
+                  <div className="pt-2 text-center text-xs text-slate-100">
                     Vous avez déjà un compte ?{' '}
                     <Link to="/login" className="text-brand-teal font-semibold hover:underline">
                       Se connecter
@@ -479,7 +479,7 @@ export const RequestSupportPage: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-extrabold text-slate-900">Informations sur l'élève</h2>
-                  <p className="text-xs text-slate-500">Le prénom suffit — l'identité reste anonymisée dans notre système</p>
+                  <p className="text-xs text-slate-100">Le prénom suffit — l'identité reste anonymisée dans notre système</p>
                 </div>
               </div>
 
@@ -563,7 +563,7 @@ export const RequestSupportPage: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-extrabold text-slate-900">Besoins pédagogiques</h2>
-                  <p className="text-xs text-slate-500">Matières, difficultés et disponibilités</p>
+                  <p className="text-xs text-slate-100">Matières, difficultés et disponibilités</p>
                 </div>
               </div>
 
@@ -578,7 +578,7 @@ export const RequestSupportPage: React.FC = () => {
                         className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
                           selected
                             ? 'bg-brand-blue text-white border-brand-blue shadow-sm scale-[1.03]'
-                            : 'bg-white text-slate-600 border-slate-200 hover:border-brand-teal hover:text-brand-teal'
+                            : 'bg-[#0B0817] text-slate-100 border-[#281F4B] hover:border-brand-teal hover:text-brand-teal'
                         }`}>
                         {selected && <CheckCircle2 className="w-3 h-3 inline mr-1" />}
                         {s.name}
@@ -594,7 +594,7 @@ export const RequestSupportPage: React.FC = () => {
                 <textarea required rows={4}
                   placeholder="Ex : Difficultés à résoudre des équations du 2nd degré, blocage en rédaction, méthode de révision inefficace…"
                   value={form.difficulties_description} onChange={(e) => set('difficulties_description', e.target.value)}
-                  className="w-full text-sm p-4 border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
+                  className="w-full text-sm p-4 border border-[#281F4B] rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
                 <div className="flex justify-between mt-1">
                   <p className="text-[11px] text-slate-400">Soyez précis — cela aide le bénévole à mieux préparer ses séances.</p>
                   <span className={`text-[11px] font-mono ${form.difficulties_description.length < 20 ? 'text-rose-400' : 'text-emerald-500'}`}>
@@ -609,7 +609,7 @@ export const RequestSupportPage: React.FC = () => {
                 <textarea rows={2}
                   placeholder="Ex : Remonter la moyenne en maths à 12/20, préparer l'épreuve de français du Brevet…"
                   value={form.pedagogical_goals} onChange={(e) => set('pedagogical_goals', e.target.value)}
-                  className="w-full text-sm p-4 border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
+                  className="w-full text-sm p-4 border border-[#281F4B] rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
               </div>
 
               {/* Format */}
@@ -622,14 +622,14 @@ export const RequestSupportPage: React.FC = () => {
                     return (
                       <button key={opt.value} type="button" onClick={() => set('format_preference', opt.value)}
                         className={`p-4 rounded-xl border-2 text-left transition-all ${
-                          sel ? 'border-brand-teal bg-teal-50' : 'border-slate-200 bg-white hover:border-slate-300'
+                          sel ? 'border-brand-teal bg-teal-50' : 'border-[#281F4B] bg-[#0B0817] hover:border-slate-300'
                         }`}>
                         <div className="flex items-center gap-2 mb-1.5">
                           <Icon className={`w-4 h-4 ${sel ? 'text-brand-teal' : 'text-slate-400'}`} />
                           <span className={`text-xs font-bold ${sel ? 'text-brand-teal' : 'text-slate-700'}`}>{opt.label}</span>
                           {sel && <CheckCircle2 className="w-3.5 h-3.5 text-brand-teal ml-auto" />}
                         </div>
-                        <p className="text-[11px] text-slate-500 leading-snug">{opt.sub}</p>
+                        <p className="text-[11px] text-slate-100 leading-snug">{opt.sub}</p>
                       </button>
                     );
                   })}
@@ -657,13 +657,13 @@ export const RequestSupportPage: React.FC = () => {
                     return (
                       <button key={opt.value} type="button" onClick={() => set('urgency', opt.value)}
                         className={`p-4 rounded-xl border-2 text-left transition-all ${
-                          sel ? colors[opt.color] : 'border-slate-200 bg-white hover:border-slate-300'
+                          sel ? colors[opt.color] : 'border-[#281F4B] bg-[#0B0817] hover:border-slate-300'
                         }`}>
                         <div className="flex items-center justify-between mb-1">
                           <span className={`text-xs font-bold ${sel ? textColors[opt.color] : 'text-slate-700'}`}>{opt.label}</span>
                           {sel && <CheckCircle2 className={`w-3.5 h-3.5 ${textColors[opt.color]}`} />}
                         </div>
-                        <p className="text-[11px] text-slate-500 leading-snug">{opt.sub}</p>
+                        <p className="text-[11px] text-slate-100 leading-snug">{opt.sub}</p>
                       </button>
                     );
                   })}
@@ -678,7 +678,7 @@ export const RequestSupportPage: React.FC = () => {
                   <textarea rows={2}
                     placeholder="Ex : Mercredi après-midi, Samedi matin, les soirs après 18h…"
                     value={form.availabilities} onChange={(e) => set('availabilities', e.target.value)}
-                    className="w-full text-sm pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
+                    className="w-full text-sm pl-10 pr-4 py-3 border border-[#281F4B] rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 focus:outline-none transition-all placeholder:text-slate-400 resize-none" />
                 </div>
               </div>
             </div>
@@ -693,12 +693,12 @@ export const RequestSupportPage: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-extrabold text-slate-900">Récapitulatif & Consentement</h2>
-                  <p className="text-xs text-slate-500">Vérifiez les informations avant d'envoyer</p>
+                  <p className="text-xs text-slate-100">Vérifiez les informations avant d'envoyer</p>
                 </div>
               </div>
 
               {/* Récap */}
-              <div className="bg-slate-50 rounded-2xl border border-slate-200 divide-y divide-slate-200 overflow-hidden text-sm">
+              <div className="bg-[#0B0817] rounded-2xl border border-[#281F4B] divide-y divide-[#281F4B] overflow-hidden text-sm text-slate-100">
                 {[
                   {
                     icon: User, label: 'Responsable légal',
@@ -733,7 +733,7 @@ export const RequestSupportPage: React.FC = () => {
                   return (
                     <div key={i} className="flex items-start gap-3 px-4 py-3">
                       <Icon className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                      <div className="min-w-[120px] text-xs font-bold text-slate-500">{row.label}</div>
+                      <div className="min-w-[120px] text-xs font-bold text-slate-100">{row.label}</div>
                       <div className="text-xs text-slate-800 flex-1">{row.value}</div>
                     </div>
                   );
@@ -746,7 +746,7 @@ export const RequestSupportPage: React.FC = () => {
                   <ShieldCheck className="w-5 h-5 text-brand-teal shrink-0" />
                   <span>Consentement parental légal (F14)</span>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-100 leading-relaxed">
                   En tant que parent ou représentant légal, j'autorise expressément l'inscription de l'élève sur
                   la plateforme, l'échange avec le bénévole désigné dans le cadre des séances scolaires encadrées
                   et l'analyse pédagogique par l'équipe de coordination. Les données sont traitées conformément
@@ -773,12 +773,12 @@ export const RequestSupportPage: React.FC = () => {
           )}
 
           {/* ── Footer navigation ── */}
-          <div className="px-6 sm:px-10 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-4">
+          <div className="bg-[#0B0817] border-t border-[#281F4B] flex items-center justify-between gap-4">
             <button
               type="button"
               onClick={() => { setErrorMsg(''); setStep(step - 1); }}
               disabled={step === 1}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-[#281F4B] text-slate-100 text-sm font-semibold hover:bg-[#0B0817] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-4 h-4" />
               Retour

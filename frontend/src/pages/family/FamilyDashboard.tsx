@@ -83,7 +83,7 @@ export const FamilyDashboard: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 bg-[#140F2D]">
       {/* En-tête */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
@@ -115,7 +115,7 @@ export const FamilyDashboard: React.FC = () => {
         </h2>
 
         {students.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-3">
+          <div className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-8 text-center space-y-3">
             <p className="text-sm font-semibold text-slate-700">Aucun élève inscrit sur ce compte.</p>
             <Link
               to="/demande-soutien"
@@ -131,7 +131,7 @@ export const FamilyDashboard: React.FC = () => {
               return (
                 <div
                   key={student.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+                  className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-6 shadow-sm space-y-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -190,7 +190,7 @@ export const FamilyDashboard: React.FC = () => {
                           </button>
                           <button
                             onClick={() => setSelectedPairingForObjectives(studentPairing)}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-200 transition-colors"
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0B0817] hover:bg-[#0B0817] text-slate-100 text-xs font-bold border border-slate-200 transition-colors"
                           >
                             <Target className="w-3.5 h-3.5 text-brand-teal" />
                             Objectifs (F09)
@@ -234,7 +234,7 @@ export const FamilyDashboard: React.FC = () => {
         </h2>
 
         {sessions.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-xs text-slate-500">
+          <div className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-8 text-center text-xs text-slate-100">
             Aucun historique de séance disponible.
           </div>
         ) : (
@@ -242,7 +242,7 @@ export const FamilyDashboard: React.FC = () => {
             {sessions.map((s) => (
               <div
                 key={s.id}
-                className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3"
+                className="bg-[#0B0817] rounded-2xl border border-[#281F4B] p-6 shadow-sm space-y-3"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div>
