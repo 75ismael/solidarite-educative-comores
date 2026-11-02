@@ -92,3 +92,59 @@ class EducationalPlatformTests(TestCase):
     def test_cms_articles_public_access(self):
         response = self.client.get('/api/cms/articles/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_volunteer_registration_and_profile_flow(self):
+        # 1. Inscription bénévole
+        reg_res = self.client.post('/api/auth/register/', {
+            'email': 'nouveau_benevole@test.km',
+            'password': 'password123',
+            'first_name': 'Fatima',
+            'last_name': 'Said',
+            'role': 'VOLUNTEER',
+            'phone': '+269 333 44 55',
+            'island': 'NDZUWANI',
+            'city': 'Mutsamudu'
+        })
+        self.assertEqual(reg_res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(reg_res.data['role'], 'VOLUNTEER')
+
+        # 2. Login
+        login_res = self.client.post('/api/auth/login/', {
+            'email': 'nouveau_benevole@test.km',
+            'password': 'password123'
+        })
+        self.assertEqual(login_res.status_code, status.HTTP_200_OK)
+        token = login_res.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+
+        # 3. Signature Charte
+        sign_res = self.client.post('/api/auth/sign-safeguarding/')
+        self.assertEqual(sign_res.status_code, status.HTTP_200_OK)
+        self.assertTrue(sign_res.data['user']['safeguarding_signed'])
+
+        # 4. Mise à jour profil bénévole
+        prof_res = self.client.put('/api/volunteering/profile/me/', {
+            'subjects_ids': [self.maths.id],
+            'levels_can_teach': 'LYCEE',
+            'languages': 'Français, Shicomori, Arabe',
+            'profession_or_studies': 'Professeur de Mathématiques',
+            'experience': '10 ans d\'enseignement en lycée',
+            'availabilities': 'Samedi matin et Mercredi après-midi',
+            'hours_per_week': 3
+        })
+        self.assertEqual(prof_res.status_code, status.HTTP_200_OK)
+        self.assertIn(self.maths.id, prof_res.data['subjects'])
+        self.assertEqual(prof_res.data['profession_or_studies'], 'Professeur de Mathématiques')
+
+    def test_duplicate_email_registration_error(self):
+        # Tentative d'inscription avec l'email déjà existant du parent
+        res = self.client.post('/api/auth/register/', {
+            'email': 'parent@test.km',
+            'password': 'password123',
+            'first_name': 'Autre',
+            'last_name': 'Personne',
+            'role': 'VOLUNTEER'
+        })
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', res.data)
+

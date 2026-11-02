@@ -72,10 +72,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'solidarite_db',
+        'USER': 'solidarite_user',
+        'PASSWORD': '',  # Mettez le mot de passe que vous avez défini lors du CREATE USER
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+
 
 AUTH_USER_MODEL = 'accounts.User'
 
