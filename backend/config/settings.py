@@ -73,11 +73,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'solidarite_db',
-        'USER': 'solidarite_user',
-        'PASSWORD': '11/Janier',  # Mettez le mot de passe que vous avez défini lors du CREATE USER
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME', 'solidarite_db'),
+        'USER': os.environ.get('DB_USER', 'solidarite_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'VOTRE_MOT_DE_PASSE_POSTGRES'),  # Remplacez par votre vrai mot de passe
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -97,6 +97,12 @@ LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Indian/Comoro'
 USE_I18N = True
 USE_TZ = True
+
+
+
+
+
+
 
 # Static & Media
 STATIC_URL = '/static/'
