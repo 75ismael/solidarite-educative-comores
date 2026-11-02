@@ -75,7 +75,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'solidarite_db',
         'USER': 'solidarite_user',
-        'PASSWORD': '',  # Mettez le mot de passe que vous avez défini lors du CREATE USER
+        'PASSWORD': '11/Janier',  # Mettez le mot de passe que vous avez défini lors du CREATE USER
         'HOST': 'localhost',
         'PORT': '5432',
     }
